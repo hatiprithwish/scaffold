@@ -11,16 +11,18 @@
   },
   "dependencies": {
     "@clerk/backend": "^1.0.0",
-    "hono": "^4.0.0",
-    "drizzle-orm": "^0.45.0",
+    "@hono/zod-validator": "^0.8.0",
+    "@logtape/hono": "^2.0.0",
     "@logtape/logtape": "^2.0.0",
     "@logtape/redaction": "^2.0.0",
-    "@logtape/hono": "^2.0.0",
-    "@scaffold/schemas": "workspace:*"
+    "@scaffold/schemas": "workspace:*",
+    "drizzle-orm": "^0.45.0",
+    "hono": "^4.0.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "drizzle-kit": "^0.31.0",
-    "wrangler": "^4.0.0",
-    "typescript": "^6.0.0"
+    "typescript": "^6.0.0",
+    "wrangler": "^4.0.0"
   }
 }

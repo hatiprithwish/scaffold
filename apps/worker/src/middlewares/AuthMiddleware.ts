@@ -2,16 +2,9 @@ import { createMiddleware } from "hono/factory";
 import AppLogger from "@/providers/logger";
 import { LogAction, LogCategory } from "@scaffold/schemas";
 import ClerkProvider from "@/providers/clerk";
+import type AppContext from "@/config/AppContext";
 
-type AppEnv = {
-  Bindings: Env;
-  Variables: {
-    clerkUserId: string;
-    clerkEmail: string;
-  };
-};
-
-const checkAuth = createMiddleware<AppEnv>(async (c, next) => {
+const checkAuth = createMiddleware<AppContext>(async (c, next) => {
   const clerk = ClerkProvider.getClerkClient(c.env);
 
   const requestState = await clerk.authenticateRequest(c.req.raw, {

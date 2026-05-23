@@ -11,4 +11,8 @@ export default class AuthRepo {
   async syncClerkUser(params: Schemas.SyncClerkUserApiRequest) {
     return await this.dal.upsertUser(params);
   }
+
+  async updateUser(params: Schemas.UpdateUserApiRequest & { clerkId: string }) {
+    return await this.dal.updateUser({ ...params, clerkId: params.clerkId });
+  }
 }

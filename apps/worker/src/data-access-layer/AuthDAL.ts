@@ -59,6 +59,54 @@ export default class AuthDAL {
     return response;
   }
 
+  async updateUser(params: Schemas.UpdateUserApiRequest & { clerkId: string }) {
+    const response: Schemas.UpdateUserApiResponse = { isSuccess: false };
+
+    try {
+      const now = new Date();
+      const user = await this.db
+        .update(users)
+        .set({ ...params, updatedAt: now })
+        .where(eq(users.clerkId, params.clerkId))
+        .returning()
+        .get();
+
+      if (!user) {
+        const message = "User not found";
+        AppLogger.error({
+          category: Schemas.LogCategory.DAL,
+          action: Schemas.LogAction.UpdateUser,
+          message,
+          metadata: params,
+        });
+        response.message = message;
+        return response;
+      }
+
+      response.isSuccess = true;
+      response.message = "User updated successfully";
+      response.data = {
+        clerkId: user.clerkId,
+        email: user.email,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        role: user.role,
+      };
+    } catch (error) {
+      const message = "Unknown error in updating user";
+      AppLogger.error({
+        category: Schemas.LogCategory.DAL,
+        action: Schemas.LogAction.UpdateUser,
+        message,
+        error,
+        metadata: params,
+      });
+      response.message = message;
+    }
+
+    return response;
+  }
+
   async upsertUser(params: Schemas.SyncClerkUserApiRequest) {
     const response: Schemas.SyncClerkUserApiResponse = {
       isSuccess: false,
