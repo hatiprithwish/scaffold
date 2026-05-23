@@ -1,0 +1,56 @@
+import { createMiddleware } from "hono/factory";
+import AppLogger from "@/providers/logger";
+import { LogAction, LogCategory } from "@scaffold/schemas";
+import ClerkProvider from "@/providers/clerk";
+
+type AppEnv = {
+  Bindings: Env;
+  Variables: {
+    clerkUserId: string;
+    clerkEmail: string;
+  };
+};
+
+const checkAuth = createMiddleware<AppEnv>(async (c, next) => {
+  const clerk = ClerkProvider.getClerkClient(c.env);
+
+  const requestState = await clerk.authenticateRequest(c.req.raw, {
+    authorizedParties: [c.env.CLERK_PUBLISHABLE_KEY],
+  });
+
+  if (!requestState.isSignedIn) {
+    AppLogger.warn({
+      category: LogCategory.Middleware,
+      action: LogAction.VerifyToken,
+      message: "Unauthenticated request",
+      metadata: { reason: requestState.reason },
+    });
+    return c.json(
+      { isSuccess: false, message: "Can't authorize request" },
+      401,
+    );
+  }
+
+  const auth = requestState.toAuth();
+  const claims = auth.sessionClaims as Record<string, unknown>;
+  const email =
+    typeof claims["email"] === "string"
+      ? claims["email"]
+      : typeof claims["primary_email_address"] === "string"
+        ? claims["primary_email_address"]
+        : "";
+
+  c.set("clerkUserId", auth.userId!);
+  c.set("clerkEmail", email);
+
+  AppLogger.info({
+    category: LogCategory.Middleware,
+    action: LogAction.VerifyToken,
+    message: "Request authenticated",
+    metadata: { userId: auth.userId },
+  });
+
+  await next();
+});
+
+export default checkAuth;

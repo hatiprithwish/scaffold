@@ -1,0 +1,21 @@
+{
+  "name": "your_worker_name",
+  "main": "src/index.ts",
+  // DEV_NOTE: keep it up to date with the current date.
+  "compatibility_date": "2026-05-23",
+  // DEV_NOTE: nodejs_compat flag is needed for using AsyncLocalStorage.
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "CLERK_PUBLISHABLE_KEY": "",
+    "CLERK_SECRET_KEY": "",
+    "CLERK_JWT_KEY": "",
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "scaffold-db",
+      "database_id": "YOUR_DATABASE_ID",
+      "migrations_dir": "src/db/migrations",
+    },
+  ],
+}

@@ -1,0 +1,13 @@
+{
+  "name": "scaffold",
+  "private": true,
+  "scripts": {
+    "dev:worker": "pnpm --filter worker dev",
+    "dev:web": "pnpm --filter web dev",
+    "build:worker": "pnpm --filter worker build",
+    "build:web": "pnpm --filter web build"
+  },
+  "devDependencies": {
+    "typescript": "^ 6.0.3"
+  }
+}
