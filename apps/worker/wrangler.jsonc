@@ -14,7 +14,7 @@
     {
       "binding": "DB",
       "database_name": "scaffold-db",
-      "database_id": "YOUR_DATABASE_ID",
+      "database_id": "c950b22e-c50c-4840-bb9b-f91143980fe1",
       "migrations_dir": "src/db/migrations",
     },
   ],

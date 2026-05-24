@@ -14,7 +14,7 @@ import {
   redactByField,
   redactByPattern,
 } from "@logtape/redaction";
-import { type LogAction, LogCategory } from "@scaffold/schemas";
+import * as Schemas from "@app/schemas";
 
 // Workers exposes AsyncLocalStorage via nodejs_compat — satisfies ContextLocalStorage<T>
 declare const AsyncLocalStorage: new <T>() => ContextLocalStorage<T>;
@@ -61,13 +61,13 @@ export function withRequestContext<T>(
 }
 
 export default class AppLogger {
-  private static get(category: LogCategory) {
+  private static get(category: Schemas.LogCategory) {
     return getLogger([Constants.APP_NAME, category]);
   }
 
   static info(params: {
-    category: LogCategory;
-    action: LogAction;
+    category: Schemas.LogCategory;
+    action: Schemas.LogAction;
     message: string;
     metadata?: any;
   }): void {
@@ -78,8 +78,8 @@ export default class AppLogger {
   }
 
   static warn(params: {
-    category: LogCategory;
-    action: LogAction;
+    category: Schemas.LogCategory;
+    action: Schemas.LogAction;
     message: string;
     metadata?: any;
   }): void {
@@ -90,8 +90,8 @@ export default class AppLogger {
   }
 
   static error(params: {
-    category: LogCategory;
-    action: LogAction;
+    category: Schemas.LogCategory;
+    action: Schemas.LogAction;
     message: string;
     error?: any;
     metadata?: any;

@@ -1,14 +1,15 @@
 import { honoLogger } from "@logtape/hono";
 import { Hono } from "hono";
 import { requestId } from "hono/request-id";
-import Constants from "@/config/Constants";
 import {
   configureLogger,
   disposeLogger,
   withRequestContext,
 } from "@/providers/logger";
 import UsersRoutes from "@/routes/UserRoutes";
-import { LogCategory } from "@scaffold/schemas";
+import NotesRoutes from "@/routes/NotesRoutes";
+import * as Schemas from "@app/schemas";
+import Constants from "@/config/Constants";
 
 // DEV_NOTE: Configure logger at the top level to ensure it's ready before handling any requests.
 await configureLogger();
@@ -23,12 +24,13 @@ app.use(async (c, next) => {
 
 app.use(
   honoLogger({
-    category: [Constants.APP_NAME, LogCategory.Middleware],
+    category: [Constants.APP_NAME, Schemas.LogCategory.Middleware],
     level: "info",
   }),
 );
 
 app.route("/users", UsersRoutes);
+app.route("/notes", NotesRoutes);
 
 export default {
   fetch(req: Request, env: Env, ctx: ExecutionContext) {

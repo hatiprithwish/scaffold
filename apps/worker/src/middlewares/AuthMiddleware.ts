@@ -1,6 +1,6 @@
 import { createMiddleware } from "hono/factory";
 import AppLogger from "@/providers/logger";
-import { LogAction, LogCategory } from "@scaffold/schemas";
+import * as Schemas from "@app/schemas";
 import ClerkProvider from "@/providers/clerk";
 import type AppContext from "@/config/AppContext";
 
@@ -13,8 +13,8 @@ const checkAuth = createMiddleware<AppContext>(async (c, next) => {
 
   if (!requestState.isSignedIn) {
     AppLogger.warn({
-      category: LogCategory.Middleware,
-      action: LogAction.VerifyToken,
+      category: Schemas.LogCategory.Middleware,
+      action: Schemas.LogAction.VerifyToken,
       message: "Unauthenticated request",
       metadata: { reason: requestState.reason },
     });
@@ -37,8 +37,8 @@ const checkAuth = createMiddleware<AppContext>(async (c, next) => {
   c.set("clerkEmail", email);
 
   AppLogger.info({
-    category: LogCategory.Middleware,
-    action: LogAction.VerifyToken,
+    category: Schemas.LogCategory.Middleware,
+    action: Schemas.LogAction.VerifyToken,
     message: "Request authenticated",
     metadata: { userId: auth.userId },
   });

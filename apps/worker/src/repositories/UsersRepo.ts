@@ -1,5 +1,5 @@
 import UsersDAL from "@/data-access-layer/UsersDAL";
-import * as Schemas from "@scaffold/schemas";
+import * as Schemas from "@app/schemas";
 
 export default class UsersRepo {
   private dal: UsersDAL;
@@ -16,9 +16,5 @@ export default class UsersRepo {
     return await this.dal.getUserDetails({
       clerkId: params.clerkId,
     });
-  }
-
-  async updateUser(params: Schemas.UpdateUserApiRequest & { clerkId: string }) {
-    return await this.dal.updateUser({ ...params, clerkId: params.clerkId });
   }
 }

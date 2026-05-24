@@ -1,6 +1,6 @@
 import { sqliteTable as table } from "drizzle-orm/sqlite-core";
 import * as t from "drizzle-orm/sqlite-core";
-import { UserRoleEnum } from "@scaffold/schemas";
+import * as Schemas from "@app/schemas";
 
 // DEV_NOTE: SQLite does not have bigInt support
 
@@ -10,7 +10,7 @@ export const users = table(
     id: t.int().primaryKey({ autoIncrement: true }),
     clerkId: t.text("clerk_id").notNull(),
     email: t.text().notNull(),
-    role: t.text().$type<UserRoleEnum>().notNull(),
+    role: t.text().$type<Schemas.UserRoleEnum>().notNull(),
     createdAt: t.integer("created_at", { mode: "timestamp" }).notNull(),
     updatedAt: t.integer("updated_at", { mode: "timestamp" }).notNull(),
   },
@@ -18,4 +18,17 @@ export const users = table(
     t.uniqueIndex("UNQ_users_clerk_id").on(table.clerkId),
     t.uniqueIndex("UNQ_users_email").on(table.email),
   ],
+);
+
+export const notes = table(
+  "notes",
+  {
+    id: t.int().primaryKey({ autoIncrement: true }),
+    userId: t.text("user_id").notNull(),
+    title: t.text().notNull(),
+    body: t.text(),
+    createdAt: t.integer("created_at", { mode: "timestamp" }).notNull(),
+    updatedAt: t.integer("updated_at", { mode: "timestamp" }),
+  },
+  (table) => [t.index("IDX_notes_user_id").on(table.userId)],
 );

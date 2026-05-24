@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import getDbClient from "@/db/dbClient";
 import { users } from "@/db/tables";
-import * as Schemas from "@scaffold/schemas";
+import * as Schemas from "@app/schemas";
 import AppLogger from "@/providers/logger";
 
 export default class UsersDAL {
@@ -38,7 +38,7 @@ export default class UsersDAL {
 
       response.isSuccess = true;
       response.message = "User details fetched successfully";
-      response.data = {
+      response.user = {
         clerkId: user.clerkId,
         email: user.email,
         createdAt: user.createdAt,
@@ -56,54 +56,6 @@ export default class UsersDAL {
       });
       response.message = message;
     }
-    return response;
-  }
-
-  async updateUser(params: Schemas.UpdateUserApiRequest & { clerkId: string }) {
-    const response: Schemas.UpdateUserApiResponse = { isSuccess: false };
-
-    try {
-      const now = new Date();
-      const user = await this.db
-        .update(users)
-        .set({ ...params, updatedAt: now })
-        .where(eq(users.clerkId, params.clerkId))
-        .returning()
-        .get();
-
-      if (!user) {
-        const message = "User not found";
-        AppLogger.error({
-          category: Schemas.LogCategory.DAL,
-          action: Schemas.LogAction.UpdateUser,
-          message,
-          metadata: params,
-        });
-        response.message = message;
-        return response;
-      }
-
-      response.isSuccess = true;
-      response.message = "User updated successfully";
-      response.data = {
-        clerkId: user.clerkId,
-        email: user.email,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-        role: user.role,
-      };
-    } catch (error) {
-      const message = "Unknown error in updating user";
-      AppLogger.error({
-        category: Schemas.LogCategory.DAL,
-        action: Schemas.LogAction.UpdateUser,
-        message,
-        error,
-        metadata: params,
-      });
-      response.message = message;
-    }
-
     return response;
   }
 
@@ -135,7 +87,7 @@ export default class UsersDAL {
         clerkId: params.clerkId,
       });
 
-      if (!userDetailsResponse.data) {
+      if (!userDetailsResponse.user) {
         const message = "Failed to fetch user after upsert";
         AppLogger.error({
           category: Schemas.LogCategory.DAL,
@@ -149,7 +101,7 @@ export default class UsersDAL {
 
       response.isSuccess = true;
       response.message = "User synced successfully";
-      response.data = userDetailsResponse.data;
+      response.user = userDetailsResponse.user;
     } catch (error) {
       const message = "Unknown error in syncing clerk user";
       AppLogger.error({

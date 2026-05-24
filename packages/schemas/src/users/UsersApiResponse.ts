@@ -1,8 +1,10 @@
 import { User } from "./UsersCommon";
 import { ApiResponse } from "../common";
 
-export type SyncClerkUserApiResponse = ApiResponse<User>;
+export interface SyncClerkUserApiResponse extends ApiResponse {
+  user?: User;
+}
 
-export type GetUserDetailsApiResponse = ApiResponse<User>;
-
-export type UpdateUserApiResponse = ApiResponse<User>;
+export interface GetUserDetailsApiResponse extends ApiResponse {
+  user?: User;
+}

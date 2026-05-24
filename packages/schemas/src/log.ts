@@ -10,11 +10,14 @@ export enum LogAction {
   // Auth
   VerifyToken = "VerifyToken",
   SyncClerkUser = "SyncClerkUser",
-  GetSession = "GetSession",
 
   // User
-  CreateUser = "CreateUser",
-  UpdateUser = "UpdateUser",
-  DeleteUser = "DeleteUser",
   GetUserDetails = "GetUserDetails",
+
+  // Notes
+  CreateNote = "CreateNote",
+  GetNoteDetails = "GetNoteDetails",
+  ListNotes = "ListNotes",
+  UpdateNote = "UpdateNote",
+  DeleteNote = "DeleteNote",
 }
