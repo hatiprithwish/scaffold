@@ -5,7 +5,7 @@ import { users } from "@/db/tables";
 import * as Schemas from "@scaffold/schemas";
 import AppLogger from "@/providers/logger";
 
-export default class AuthDAL {
+export default class UsersDAL {
   private db: DrizzleD1Database;
 
   constructor(env: Env) {

@@ -1,4 +1,4 @@
-import { User } from "./AuthCommon";
+import { User } from "./UsersCommon";
 import { ApiResponse } from "../common";
 
 export type SyncClerkUserApiResponse = ApiResponse<User>;

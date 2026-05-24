@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { UserBase, ZUserRoleEnum } from "./AuthCommon";
+import { UserBase, ZUserRoleEnum } from "./UsersCommon";
 
 export type SyncClerkUserApiRequest = UserBase;
 

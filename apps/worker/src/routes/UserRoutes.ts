@@ -1,17 +1,17 @@
 import { Hono } from "hono";
-import AuthRepo from "@/repositories/AuthRepo";
+import UsersRepo from "@/repositories/UsersRepo";
 import checkAuth from "@/middlewares/AuthMiddleware";
 import AppContext from "@/config/AppContext";
 import { bodyValidator } from "@/middlewares/ValidateSchema";
 import { UserRoleEnum, ZUpdateUserApiRequest } from "@scaffold/schemas";
 
-const AuthRoutes = new Hono<AppContext>();
+const UsersRoutes = new Hono<AppContext>();
 
-AuthRoutes.post("/clerk-sync", checkAuth, async (c) => {
+UsersRoutes.post("/clerk-sync", checkAuth, async (c) => {
   const clerkId = c.get("clerkUserId");
   const email = c.get("clerkEmail");
 
-  const repo = new AuthRepo(c.env);
+  const repo = new UsersRepo(c.env);
   const response = await repo.syncClerkUser({
     clerkId,
     email,
@@ -21,7 +21,16 @@ AuthRoutes.post("/clerk-sync", checkAuth, async (c) => {
   return c.json(response, response.isSuccess ? 200 : 500);
 });
 
-AuthRoutes.patch(
+UsersRoutes.get("/me", checkAuth, async (c) => {
+  const clerkId = c.get("clerkUserId");
+
+  const repo = new UsersRepo(c.env);
+  const response = await repo.getUserDetails({ clerkId });
+
+  return c.json(response, response.isSuccess ? 200 : 404);
+});
+
+UsersRoutes.patch(
   "/me",
   checkAuth,
   bodyValidator(ZUpdateUserApiRequest),
@@ -29,11 +38,11 @@ AuthRoutes.patch(
     const clerkId = c.get("clerkUserId");
     const body = c.req.valid("json");
 
-    const repo = new AuthRepo(c.env);
+    const repo = new UsersRepo(c.env);
     const response = await repo.updateUser({ ...body, clerkId });
 
-    return c.json(response, response.isSuccess ? 200 : 404);
+    return c.json(response, response.isSuccess ? 200 : 500);
   },
 );
 
-export default AuthRoutes;
+export default UsersRoutes;

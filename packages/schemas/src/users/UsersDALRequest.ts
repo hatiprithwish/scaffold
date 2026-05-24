@@ -1,4 +1,4 @@
-import { UserRoleEnum } from "./AuthCommon";
+import { UserRoleEnum } from "./UsersCommon";
 
 export interface SyncClerkUserDALRequest {
   clerkId: string;

@@ -7,7 +7,7 @@ import {
   disposeLogger,
   withRequestContext,
 } from "@/providers/logger";
-import AuthRoutes from "@/routes/AuthRoutes";
+import UsersRoutes from "@/routes/UserRoutes";
 import { LogCategory } from "@scaffold/schemas";
 
 // DEV_NOTE: Configure logger at the top level to ensure it's ready before handling any requests.
@@ -28,7 +28,7 @@ app.use(
   }),
 );
 
-app.route("/auth", AuthRoutes);
+app.route("/users", UsersRoutes);
 
 export default {
   fetch(req: Request, env: Env, ctx: ExecutionContext) {
