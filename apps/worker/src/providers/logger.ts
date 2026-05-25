@@ -1,7 +1,8 @@
 import Constants from "@/config/Constants";
 import {
-  configure,
+  type LogRecord,
   defaultConsoleFormatter,
+  configure,
   dispose,
   getConsoleSink,
   getLogger,
@@ -16,17 +17,22 @@ import {
 import * as Schemas from "@app/schemas";
 import { AsyncLocalStorage } from "node:async_hooks";
 
-function serializeError(error: unknown): Record<string, unknown> {
-  if (error instanceof Error) {
-    return { name: error.name, message: error.message, stack: error.stack };
-  }
-  return { raw: String(error) };
+function consoleFormatterWithProps(record: LogRecord): readonly unknown[] {
+  const base = defaultConsoleFormatter(record);
+  const { action, metadata, error, category } = record.properties;
+  const props: Record<string, unknown> = {};
+  if (category !== undefined) props.category = category;
+  if (action !== undefined) props.action = action;
+  if (metadata !== undefined) props.metadata = metadata;
+  if (error !== undefined) props.error = error;
+  if (Object.keys(props).length === 0) return base;
+  return [...base, "\n", props];
 }
 
 export async function configureLogger(): Promise<void> {
   const consoleSink = redactByField(
     getConsoleSink({
-      formatter: redactByPattern(defaultConsoleFormatter, [
+      formatter: redactByPattern(consoleFormatterWithProps, [
         EMAIL_ADDRESS_PATTERN,
       ]),
     }),
@@ -106,7 +112,7 @@ export default class AppLogger {
       category: params.category,
       action: params.action,
       metadata: params.metadata,
-      error: serializeError(params.error),
+      error: params.error,
     });
   }
 }

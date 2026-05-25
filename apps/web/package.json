@@ -3,9 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite dev",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "NODE_OPTIONS='--import ./instrument.server.mjs' vite dev",
+    "build": "vite build && cp instrument.server.mjs .output/server",
+    "preview": "vite preview",
+    "start": "node --import ./.output/server/instrument.server.mjs .output/server/index.mjs"
   },
   "dependencies": {
     "@app/schemas": "workspace:*",

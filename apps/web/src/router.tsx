@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/tanstackstart-react";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { createQueryClient } from "./providers/queryClient";
@@ -14,7 +15,7 @@ export function getRouter() {
 export function createRouter() {
   const queryClient = createQueryClient();
 
-  return createTanStackRouter({
+  const router = createTanStackRouter({
     routeTree,
     context: { queryClient },
     Wrap: ({ children }) => (
@@ -25,6 +26,24 @@ export function createRouter() {
       </QueryClientProvider>
     ),
   });
+
+  if (!router.isServer) {
+    Sentry.init({
+      dsn: import.meta.env.VITE_SENTRY_DSN,
+      sendDefaultPii: true,
+      integrations: [
+        Sentry.tanstackRouterBrowserTracingIntegration(router),
+        Sentry.replayIntegration(),
+        Sentry.feedbackIntegration({ colorScheme: "system" }),
+      ],
+      enableLogs: true,
+      tracesSampleRate: 1.0,
+      replaysSessionSampleRate: 0.1,
+      replaysOnErrorSampleRate: 1.0,
+    });
+  }
+
+  return router;
 }
 
 declare module "@tanstack/react-router" {

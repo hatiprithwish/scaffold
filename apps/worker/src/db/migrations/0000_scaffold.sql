@@ -2,7 +2,7 @@ CREATE TABLE `notes` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`user_id` text NOT NULL,
 	`title` text NOT NULL,
-	`body` text NOT NULL,
+	`body` text NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer
 );

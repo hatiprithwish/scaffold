@@ -1,4 +1,3 @@
-import "@/sentry";
 import {
   createRootRouteWithContext,
   Outlet,
