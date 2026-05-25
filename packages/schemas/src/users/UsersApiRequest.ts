@@ -1,3 +1,3 @@
-import { UserBase } from "./UsersCommon";
+import type { UserBase } from "./UsersCommon";
 
 export type SyncClerkUserApiRequest = UserBase;

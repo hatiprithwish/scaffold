@@ -1,5 +1,5 @@
-import { User } from "./UsersCommon";
-import { ApiResponse } from "../common";
+import type { User } from "./UsersCommon";
+import type { ApiResponse } from "../common";
 
 export interface SyncClerkUserApiResponse extends ApiResponse {
   user?: User;

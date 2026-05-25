@@ -1,8 +1,6 @@
 import { env, createExecutionContext, waitOnExecutionContext } from "cloudflare:test";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import worker from "../index";
-import ClerkProvider from "@/providers/clerk";
-
 // Declare env type for this test suite
 declare module "cloudflare:test" {
   interface ProvidedEnv extends Env {}

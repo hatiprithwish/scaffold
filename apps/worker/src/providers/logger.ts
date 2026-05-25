@@ -14,7 +14,7 @@ import {
   redactByField,
   redactByPattern,
 } from "@logtape/redaction";
-import * as Schemas from "@app/schemas";
+import type * as Schemas from "@app/schemas";
 import { AsyncLocalStorage } from "node:async_hooks";
 
 function consoleFormatterWithProps(record: LogRecord): readonly unknown[] {
@@ -32,9 +32,7 @@ function consoleFormatterWithProps(record: LogRecord): readonly unknown[] {
 export async function configureLogger(): Promise<void> {
   const consoleSink = redactByField(
     getConsoleSink({
-      formatter: redactByPattern(consoleFormatterWithProps, [
-        EMAIL_ADDRESS_PATTERN,
-      ]),
+      formatter: redactByPattern(consoleFormatterWithProps, [EMAIL_ADDRESS_PATTERN]),
     }),
     [...Constants.APP_REDACT_FIELDS, ...DEFAULT_REDACT_FIELDS],
   );
@@ -63,10 +61,7 @@ export async function configureLogger(): Promise<void> {
 export { dispose as disposeLogger };
 
 // DEV_NOTE: Helper function to run a block of code within a request context (e.g. for correlating logs with a request ID).
-export function withRequestContext<T>(
-  requestId: string,
-  fn: () => Promise<T>,
-): Promise<T> {
+export function withRequestContext<T>(requestId: string, fn: () => Promise<T>): Promise<T> {
   return withContext({ requestId }, fn);
 }
 

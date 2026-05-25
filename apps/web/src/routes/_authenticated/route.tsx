@@ -14,9 +14,7 @@ function AuthenticatedLayout() {
   if (!isSignedIn) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-4">
-        <p className="text-lg text-muted-foreground">
-          Please sign in to see this page.
-        </p>
+        <p className="text-lg text-muted-foreground">Please sign in to see this page.</p>
         <Button asChild>
           <Link to="/auth/sign-in">Sign in</Link>
         </Button>

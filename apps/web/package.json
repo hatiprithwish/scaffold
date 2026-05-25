@@ -4,11 +4,14 @@
   "type": "module",
   "scripts": {
     "dev": "NODE_OPTIONS='--import ./instrument.server.mjs' vite dev",
-    "build": "vite build && cp instrument.server.mjs .output/server",
+    "build": "vite build",
     "preview": "vite preview",
     "start": "node --import ./.output/server/instrument.server.mjs .output/server/index.mjs",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "generate-types": "wrangler types",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix"
   },
   "dependencies": {
     "@app/schemas": "workspace:*",
@@ -36,6 +39,7 @@
     "zustand": "^5.0.0"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.37.1",
     "@tanstack/router-plugin": "^1.0.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -44,9 +48,12 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^6.0.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-x": "^5.8.1",
     "jsdom": "^29.1.1",
     "typescript": "^6.0.0",
     "vite": "^8.0.0",
-    "vitest": "^4.1.6"
+    "vitest": "^4.1.6",
+    "wrangler": "^4.92.0"
   }
 }

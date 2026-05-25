@@ -2,11 +2,7 @@ import * as Sentry from "@sentry/tanstackstart-react";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { createQueryClient } from "./providers/queryClient";
-import {
-  QueryClientProvider,
-  dehydrate,
-  HydrationBoundary,
-} from "@tanstack/react-query";
+import { QueryClientProvider, dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 export function getRouter() {
   return createRouter();
@@ -20,9 +16,7 @@ export function createRouter() {
     context: { queryClient },
     Wrap: ({ children }) => (
       <QueryClientProvider client={queryClient}>
-        <HydrationBoundary state={dehydrate(queryClient)}>
-          {children}
-        </HydrationBoundary>
+        <HydrationBoundary state={dehydrate(queryClient)}>{children}</HydrationBoundary>
       </QueryClientProvider>
     ),
   });

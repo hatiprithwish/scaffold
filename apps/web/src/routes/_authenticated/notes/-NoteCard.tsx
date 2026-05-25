@@ -23,9 +23,7 @@ const NoteCard = ({ note }: { note: Schemas.Note }) => {
         </CardHeader>
         {note.body && (
           <CardContent>
-            <p className="text-sm text-muted-foreground line-clamp-2">
-              {note.body}
-            </p>
+            <p className="text-sm text-muted-foreground line-clamp-2">{note.body}</p>
           </CardContent>
         )}
       </Card>

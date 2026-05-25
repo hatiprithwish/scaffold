@@ -6,7 +6,7 @@ import { NotesQueries, useUpdateNote, useDeleteNote } from "../-data";
 import NoteHeader from "./-NoteHeader";
 import ViewNote from "./-ViewNote";
 import { NoteForm } from "./-NoteForm";
-import * as Schemas from "@app/schemas";
+import type * as Schemas from "@app/schemas";
 
 export const Route = createFileRoute("/_authenticated/notes/$noteId/")({
   component: NoteDetailPage,
@@ -18,9 +18,7 @@ function NoteDetailPage() {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
 
-  const { data, isPending, isError } = useQuery(
-    NotesQueries.detail(noteId, getToken),
-  );
+  const { data, isPending, isError } = useQuery(NotesQueries.detail(noteId, getToken));
   const note = data?.note;
 
   const updateNote = useUpdateNote();

@@ -1,4 +1,5 @@
-import { and, eq, SQL } from "drizzle-orm";
+import type { SQL } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import getDbClient from "@/db/dbClient";
 import { notes } from "@/db/tables";
@@ -51,10 +52,7 @@ export default class NotesDAL {
     const response: Schemas.GetNoteApiResponse = { isSuccess: false };
 
     try {
-      const conditions: SQL[] = [
-        eq(notes.id, params.id),
-        eq(notes.userId, params.userId),
-      ];
+      const conditions: SQL[] = [eq(notes.id, params.id), eq(notes.userId, params.userId)];
 
       const [note] = await this.db
         .select()

@@ -1,5 +1,5 @@
-import { Note } from "./NotesCommon";
-import { ApiResponse } from "../common";
+import type { Note } from "./NotesCommon";
+import type { ApiResponse } from "../common";
 
 export interface CreateNoteApiResponse extends ApiResponse {
   note?: Note;

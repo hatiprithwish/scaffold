@@ -53,9 +53,7 @@
       "indexes": {
         "IDX_notes_user_id": {
           "name": "IDX_notes_user_id",
-          "columns": [
-            "user_id"
-          ],
+          "columns": ["user_id"],
           "isUnique": false
         }
       },
@@ -113,16 +111,12 @@
       "indexes": {
         "UNQ_users_clerk_id": {
           "name": "UNQ_users_clerk_id",
-          "columns": [
-            "clerk_id"
-          ],
+          "columns": ["clerk_id"],
           "isUnique": true
         },
         "UNQ_users_email": {
           "name": "UNQ_users_email",
-          "columns": [
-            "email"
-          ],
+          "columns": ["email"],
           "isUnique": true
         }
       },

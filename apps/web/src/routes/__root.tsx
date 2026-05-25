@@ -1,9 +1,4 @@
-import {
-  createRootRouteWithContext,
-  Outlet,
-  HeadContent,
-  Scripts,
-} from "@tanstack/react-router";
+import { createRootRouteWithContext, Outlet, HeadContent, Scripts } from "@tanstack/react-router";
 import { ClerkProvider } from "@clerk/tanstack-react-start";
 import * as Sentry from "@sentry/tanstackstart-react";
 import type { QueryClient } from "@tanstack/react-query";

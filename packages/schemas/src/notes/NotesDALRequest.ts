@@ -1,5 +1,5 @@
-import { NullableDALFields } from "../common";
-import { Note, NoteBase } from "./NotesCommon";
+import type { NullableDALFields } from "../common";
+import type { Note, NoteBase } from "./NotesCommon";
 
 export type CreateNoteDALRequest = NoteBase & Pick<Note, "userId">;
 

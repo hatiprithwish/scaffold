@@ -2,6 +2,7 @@ import { defineConfig, loadEnv } from "vite";
 import viteReact from "@vitejs/plugin-react";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import { sentryTanstackStart } from "@sentry/tanstackstart-react/vite";
+import { cloudflare } from "@cloudflare/vite-plugin";
 import path from "path";
 import tailwindcss from "@tailwindcss/vite";
 
@@ -10,6 +11,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
+      cloudflare({ viteEnvironment: { name: "ssr" } }),
       tanstackStart(),
       sentryTanstackStart({
         org: env.SENTRY_ORG,
@@ -27,10 +29,7 @@ export default defineConfig(({ mode }) => {
       tsconfigPaths: true,
       alias: {
         "@": path.resolve(__dirname, "./src"),
-        "@app/schemas": path.resolve(
-          __dirname,
-          "../../packages/schemas/src/index.ts",
-        ),
+        "@app/schemas": path.resolve(__dirname, "../../packages/schemas/src/index.ts"),
       },
     },
   };

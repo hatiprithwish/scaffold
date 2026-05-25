@@ -1,6 +1,6 @@
 import { sqliteTable as table } from "drizzle-orm/sqlite-core";
 import * as t from "drizzle-orm/sqlite-core";
-import * as Schemas from "@app/schemas";
+import type * as Schemas from "@app/schemas";
 
 // DEV_NOTE: SQLite does not have bigInt support
 

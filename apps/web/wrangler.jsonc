@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "scaffold-web",
+  "compatibility_date": "2026-05-25",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "@tanstack/react-start/server-entry",
+  "vars": {
+    "VITE_API_URL": "",
+    "VITE_CLERK_PUBLISHABLE_KEY": "",
+    "VITE_SENTRY_DSN": "",
+  },
+  "env": {
+    "staging": {
+      "name": "scaffold-web-staging",
+      "vars": {
+        "VITE_API_URL": "",
+        "SENTRY_PROJECT": "scaffold",
+      },
+    },
+  },
+}

@@ -19,10 +19,7 @@ const checkAuth = createMiddleware<AppContext>(async (c, next) => {
       message: "Unauthenticated request",
       metadata: { reason: requestState.reason },
     });
-    return c.json(
-      { isSuccess: false, message: "Can't authorize request" },
-      401,
-    );
+    return c.json({ isSuccess: false, message: "Can't authorize request" }, 401);
   }
 
   const auth = requestState.toAuth();

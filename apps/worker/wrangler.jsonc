@@ -6,10 +6,7 @@
   // DEV_NOTE: nodejs_compat flag is needed for using AsyncLocalStorage.
   "compatibility_flags": ["nodejs_compat"],
   "vars": {
-    "CLERK_PUBLISHABLE_KEY": "",
-    "CLERK_SECRET_KEY": "",
-    "CLERK_JWT_KEY": "",
-    "ALLOWED_CORS_ORIGIN": "http://localhost:3000,http://localhost:5173",
+    "ALLOWED_CORS_ORIGIN": "http://localhost:3000",
   },
   "d1_databases": [
     {
@@ -20,4 +17,21 @@
       "remote": true,
     },
   ],
+  "env": {
+    "staging": {
+      "name": "scaffold-worker-staging",
+      "vars": {
+        "ALLOWED_CORS_ORIGIN": "http://localhost:3000",
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "scaffold-db",
+          "database_id": "c950b22e-c50c-4840-bb9b-f91143980fe1",
+          "migrations_dir": "src/db/migrations",
+          "remote": true,
+        },
+      ],
+    },
+  },
 }

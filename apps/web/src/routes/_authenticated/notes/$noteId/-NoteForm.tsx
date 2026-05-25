@@ -45,8 +45,7 @@ export function NoteForm({
     >
       <form.Field name="title">
         {(field) => {
-          const isInvalid =
-            field.state.meta.isTouched && !field.state.meta.isValid;
+          const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
           return (
             <Field data-invalid={isInvalid}>
               <FieldLabel htmlFor={field.name}>Title</FieldLabel>
@@ -65,8 +64,7 @@ export function NoteForm({
 
       <form.Field name="body">
         {(field) => {
-          const isInvalid =
-            field.state.meta.isTouched && !field.state.meta.isValid;
+          const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
           return (
             <Field data-invalid={isInvalid}>
               <FieldLabel htmlFor={field.name}>Body</FieldLabel>

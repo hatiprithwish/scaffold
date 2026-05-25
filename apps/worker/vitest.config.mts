@@ -11,10 +11,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),
-      "@app/schemas": path.resolve(
-        import.meta.dirname,
-        "../../packages/schemas/src/index.ts",
-      ),
+      "@app/schemas": path.resolve(import.meta.dirname, "../../packages/schemas/src/index.ts"),
     },
   },
   test: {

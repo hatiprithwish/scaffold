@@ -1,5 +1,5 @@
 import UsersDAL from "@/data-access-layer/UsersDAL";
-import * as Schemas from "@app/schemas";
+import type * as Schemas from "@app/schemas";
 
 export default class UsersRepo {
   private dal: UsersDAL;

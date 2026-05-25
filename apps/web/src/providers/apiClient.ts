@@ -1,4 +1,4 @@
-import * as Schemas from "@app/schemas";
+import type * as Schemas from "@app/schemas";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 

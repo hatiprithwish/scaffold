@@ -1,5 +1,5 @@
 import NotesDAL from "@/data-access-layer/NotesDAL";
-import * as Schemas from "@app/schemas";
+import type * as Schemas from "@app/schemas";
 
 export default class NotesRepo {
   private dal: NotesDAL;
@@ -24,9 +24,7 @@ export default class NotesRepo {
     return await this.dal.getNotes(params);
   }
 
-  async updateNote(
-    params: Schemas.UpdateNoteApiRequest & { userId: string; id: number },
-  ) {
+  async updateNote(params: Schemas.UpdateNoteApiRequest & { userId: string; id: number }) {
     return await this.dal.updateNote({
       id: params.id,
       userId: params.userId,

@@ -2,11 +2,7 @@ import { honoLogger } from "@logtape/hono";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { requestId } from "hono/request-id";
-import {
-  configureLogger,
-  disposeLogger,
-  withRequestContext,
-} from "@/providers/logger";
+import { configureLogger, disposeLogger, withRequestContext } from "@/providers/logger";
 import UsersRoutes from "@/routes/UserRoutes";
 import NotesRoutes from "@/routes/NotesRoutes";
 import * as Schemas from "@app/schemas";

@@ -1,8 +1,4 @@
-import {
-  queryOptions,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { queryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@clerk/tanstack-react-start";
 import { apiClient } from "@/providers/apiClient";
 import type * as Schemas from "@app/schemas";
@@ -56,23 +52,14 @@ export function useUpdateNote() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      id,
-      body,
-    }: {
-      id: number;
-      body: Schemas.UpdateNoteApiRequest;
-    }) =>
+    mutationFn: ({ id, body }: { id: number; body: Schemas.UpdateNoteApiRequest }) =>
       apiClient<Schemas.UpdateNoteApiResponse>(`/notes/${id}`, getToken, {
         method: "PATCH",
         body: JSON.stringify(body),
       }),
     onSuccess: async (response) => {
       if (response.note) {
-        queryClient.setQueryData(
-          NotesQueries.keys.detail(response.note.id),
-          response,
-        );
+        queryClient.setQueryData(NotesQueries.keys.detail(response.note.id), response);
       }
       await queryClient.invalidateQueries({
         queryKey: NotesQueries.keys.all(),
@@ -86,8 +73,7 @@ export function useDeleteNote() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: number) =>
-      apiClient<void>(`/notes/${id}`, getToken, { method: "DELETE" }),
+    mutationFn: (id: number) => apiClient<void>(`/notes/${id}`, getToken, { method: "DELETE" }),
     onSuccess: async (_data, id) => {
       queryClient.removeQueries({ queryKey: NotesQueries.keys.detail(id) });
       await queryClient.invalidateQueries({
