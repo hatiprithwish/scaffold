@@ -1,7 +1,6 @@
-export interface ApiResponse<T = unknown> {
+export interface ApiResponse {
   isSuccess: boolean;
   message?: string;
-  data?: T;
 }
 
 export type NullableDALFields<T> = {

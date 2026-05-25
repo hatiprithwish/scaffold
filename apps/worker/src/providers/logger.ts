@@ -1,6 +1,5 @@
 import Constants from "@/config/Constants";
 import {
-  type ContextLocalStorage,
   configure,
   defaultConsoleFormatter,
   dispose,
@@ -15,9 +14,14 @@ import {
   redactByPattern,
 } from "@logtape/redaction";
 import * as Schemas from "@app/schemas";
+import { AsyncLocalStorage } from "node:async_hooks";
 
-// Workers exposes AsyncLocalStorage via nodejs_compat — satisfies ContextLocalStorage<T>
-declare const AsyncLocalStorage: new <T>() => ContextLocalStorage<T>;
+function serializeError(error: unknown): Record<string, unknown> {
+  if (error instanceof Error) {
+    return { name: error.name, message: error.message, stack: error.stack };
+  }
+  return { raw: String(error) };
+}
 
 export async function configureLogger(): Promise<void> {
   const consoleSink = redactByField(
@@ -72,8 +76,9 @@ export default class AppLogger {
     metadata?: any;
   }): void {
     AppLogger.get(params.category).info(params.message, {
+      category: params.category,
       action: params.action,
-      ...params.metadata,
+      metadata: params.metadata,
     });
   }
 
@@ -84,8 +89,9 @@ export default class AppLogger {
     metadata?: any;
   }): void {
     AppLogger.get(params.category).warn(params.message, {
+      category: params.category,
       action: params.action,
-      ...params.metadata,
+      metadata: params.metadata,
     });
   }
 
@@ -93,13 +99,14 @@ export default class AppLogger {
     category: Schemas.LogCategory;
     action: Schemas.LogAction;
     message: string;
-    error?: any;
+    error?: unknown;
     metadata?: any;
   }): void {
     AppLogger.get(params.category).error(params.message, {
+      category: params.category,
       action: params.action,
-      error: params.error,
-      ...params.metadata,
+      metadata: params.metadata,
+      error: serializeError(params.error),
     });
   }
 }

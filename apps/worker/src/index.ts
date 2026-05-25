@@ -1,5 +1,6 @@
 import { honoLogger } from "@logtape/hono";
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { requestId } from "hono/request-id";
 import {
   configureLogger,
@@ -16,6 +17,19 @@ await configureLogger();
 
 const app = new Hono<{ Bindings: Env }>();
 
+app.use((c, next) =>
+  cors({
+    origin: (origin) => {
+      const allowed = c.env.ALLOWED_CORS_ORIGIN.split(",");
+      return allowed.includes(origin) ? origin : null;
+    },
+    allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization", "x-request-id"],
+    exposeHeaders: ["x-request-id"],
+    maxAge: 7200,
+    credentials: true,
+  })(c, next),
+);
 app.use(requestId({ headerName: "x-request-id" }));
 
 app.use(async (c, next) => {

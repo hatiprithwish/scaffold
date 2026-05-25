@@ -7,8 +7,9 @@ import type AppContext from "@/config/AppContext";
 const checkAuth = createMiddleware<AppContext>(async (c, next) => {
   const clerk = ClerkProvider.getClerkClient(c.env);
 
+  const allowedOrigins = c.env.ALLOWED_CORS_ORIGIN.split(",");
   const requestState = await clerk.authenticateRequest(c.req.raw, {
-    authorizedParties: [c.env.CLERK_PUBLISHABLE_KEY],
+    authorizedParties: allowedOrigins,
   });
 
   if (!requestState.isSignedIn) {

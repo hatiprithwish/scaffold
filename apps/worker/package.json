@@ -10,17 +10,19 @@
     "db:migrate": "wrangler d1 migrations apply DB"
   },
   "dependencies": {
+    "@app/schemas": "workspace:*",
     "@clerk/backend": "^1.0.0",
     "@hono/zod-validator": "^0.8.0",
     "@logtape/hono": "^2.0.0",
     "@logtape/logtape": "^2.0.0",
     "@logtape/redaction": "^2.0.0",
-    "@app/schemas": "workspace:*",
     "drizzle-orm": "^0.45.0",
     "hono": "^4.0.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260517.1",
+    "@types/node": "^25.8.0",
     "drizzle-kit": "^0.31.0",
     "typescript": "^6.0.0",
     "wrangler": "^4.0.0"

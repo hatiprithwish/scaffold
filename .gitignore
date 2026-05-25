@@ -7,3 +7,4 @@ dist/
 *.tsbuildinfo
 routeTree.gen.ts
 .dev.vars
+.tanstack/

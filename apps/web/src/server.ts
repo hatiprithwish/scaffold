@@ -1,4 +1,11 @@
-import { createStartHandler, defaultStreamHandler } from "@tanstack/start/server";
-import { createRouter } from "./router";
+// DEV_NOTE: Tanstack Start Server entry point
 
-export default createStartHandler({ createRouter })(defaultStreamHandler);
+import {
+  createStartHandler,
+  defaultStreamHandler,
+} from "@tanstack/react-start/server";
+import { createServerEntry } from "@tanstack/react-start/server-entry";
+
+export default createServerEntry({
+  fetch: createStartHandler(defaultStreamHandler),
+});
