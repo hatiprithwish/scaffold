@@ -11,10 +11,7 @@
     "lint:fix": "pnpm -r lint:fix",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "prepare": "simple-git-hooks"
-  },
-  "simple-git-hooks": {
-    "pre-commit": "pnpm exec lint-staged"
+    "prepare": "husky"
   },
   "lint-staged": {
     "**/*.{ts,tsx,js,jsx,json,md}": "prettier --write"
@@ -24,9 +21,9 @@
     "eslint": "^10.4.0",
     "eslint-config-prettier": "10.1.8",
     "globals": "^17.6.0",
+    "husky": "^9.1.7",
     "lint-staged": "17.0.5",
     "prettier": "3.8.3",
-    "simple-git-hooks": "2.13.1",
     "typescript": "^ 6.0.3",
     "typescript-eslint": "^8.59.3"
   }
