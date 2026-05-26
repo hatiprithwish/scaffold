@@ -4,6 +4,7 @@ import * as Sentry from "@sentry/tanstackstart-react";
 import type { QueryClient } from "@tanstack/react-query";
 import appCss from "../styles.css?url";
 import type { ReactNode } from "react";
+import { Toaster } from "../shadcn/ui/sonner";
 
 interface RouterContext {
   queryClient: QueryClient;
@@ -17,6 +18,7 @@ function RootDocument({ children }: { children: ReactNode }) {
       </head>
       <body>
         {children}
+        <Toaster />
         <Scripts />
       </body>
     </html>
