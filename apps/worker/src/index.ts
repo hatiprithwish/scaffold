@@ -8,7 +8,7 @@ import NotesRoutes from "@/routes/NotesRoutes";
 import * as Schemas from "@app/schemas";
 import Constants from "@/config/Constants";
 
-// DEV_NOTE: Configure logger at the top level to ensure it's ready before handling any requests.
+// DEV_NOTE: Configure logger at the top level to ensure it's ready before handling any requests
 await configureLogger();
 
 const app = new Hono<{ Bindings: Env }>();
