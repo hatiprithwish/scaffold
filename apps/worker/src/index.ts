@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { requestId } from "hono/request-id";
 import { configureLogger, disposeLogger, withRequestContext } from "@/providers/logger";
+import AuthRoutes from "@/routes/AuthRoutes";
 import UsersRoutes from "@/routes/UserRoutes";
 import NotesRoutes from "@/routes/NotesRoutes";
 import * as Schemas from "@app/schemas";
@@ -39,6 +40,7 @@ app.use(
   }),
 );
 
+app.route("/auth", AuthRoutes);
 app.route("/users", UsersRoutes);
 app.route("/notes", NotesRoutes);
 
