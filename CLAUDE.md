@@ -168,6 +168,7 @@ Routes → Repo → DAL → DB
 ### New feature checklist
 
 - [ ] Add `LogCategory` and `LogAction` entries in `packages/schemas/src/log.ts`
+- [ ] Define `<Feature>StatusIntEnum`, `<Feature>StatusLabelEnum`, `<FEATURE>_STATUS_LABEL_MAP` in `<Feature>Common.ts` for any status field
 - [ ] Create `packages/schemas/src/<feature>/` with all 5 files + `index.ts`
 - [ ] Export from `packages/schemas/src/index.ts`
 - [ ] Add DB table in `apps/worker/src/db/tables.ts`
@@ -182,6 +183,74 @@ Routes → Repo → DAL → DB
 ---
 
 ## 6. CONVENTIONS
+
+### Status Enum Pattern (mandatory for any field with discrete states)
+
+Every status/state field stored as integer in DB MUST have two enums and both values in the API response.
+
+**`packages/schemas/src/<feature>/<Feature>Common.ts`:**
+
+```ts
+export enum NoteStatusIntEnum {
+  Draft = 1,
+  Published = 2,
+  Archived = 3,
+}
+
+export enum NoteStatusLabelEnum {
+  Draft = "Draft",
+  Published = "Published",
+  Archived = "Archived",
+}
+
+export const NOTE_STATUS_LABEL_MAP: Record<NoteStatusIntEnum, NoteStatusLabelEnum> = {
+  [NoteStatusIntEnum.Draft]: NoteStatusLabelEnum.Draft,
+  [NoteStatusIntEnum.Published]: NoteStatusLabelEnum.Published,
+  [NoteStatusIntEnum.Archived]: NoteStatusLabelEnum.Archived,
+};
+
+// DB shape
+export type Note = { ..., status: NoteStatusIntEnum };
+
+// API response shape — both int and label
+export interface NoteWithStatus extends Note {
+  noteStatus: NoteStatusIntEnum;
+  noteStatusLabel: NoteStatusLabelEnum;
+}
+```
+
+**`apps/worker/src/db/tables.ts`:**
+
+```ts
+// Use raw integer literal for default — drizzle-kit cannot resolve enum imports at codegen time
+status: t.integer().$type<NoteStatusIntEnum>().notNull().default(1), // NoteStatusIntEnum.Draft
+```
+
+**`apps/worker/src/repositories/<Feature>Repo.ts` — map int → label here, never in DAL:**
+
+```ts
+private withStatusLabel(note: Schemas.Note): Schemas.NoteWithStatus {
+  return {
+    ...note,
+    noteStatus: note.status,
+    noteStatusLabel: Schemas.NOTE_STATUS_LABEL_MAP[note.status],
+  };
+}
+```
+
+**Golden example:** see `packages/schemas/src/notes/NotesCommon.ts` and `apps/worker/src/repositories/NotesRepo.ts`
+
+**Rules:**
+
+- DB stores integer only — NEVER store label string in DB
+- DAL returns raw int — NEVER add label mapping in DAL
+- Repo maps int → label — ALWAYS in `withStatusLabel` private method
+- NEVER return raw int without the label counterpart in API response
+- Naming: `<Feature>StatusIntEnum`, `<Feature>StatusLabelEnum`, `<FEATURE>_STATUS_LABEL_MAP`
+- Response fields: `<feature>Status` (int) + `<feature>StatusLabel` (string), both always present
+- Frontend renders label, compares/filters with int enum values
+
+---
 
 ### Type ownership
 

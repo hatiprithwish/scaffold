@@ -27,6 +27,7 @@ export const notes = table(
     userId: t.text("user_id").notNull(),
     title: t.text().notNull(),
     body: t.text(),
+    status: t.integer().$type<Schemas.NoteStatusIntEnum>().notNull().default(1), // NoteStatusIntEnum.Draft
     createdAt: t.integer("created_at", { mode: "timestamp" }).notNull(),
     updatedAt: t.integer("updated_at", { mode: "timestamp" }),
   },
