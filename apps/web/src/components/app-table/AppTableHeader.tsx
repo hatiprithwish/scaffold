@@ -11,6 +11,7 @@ import { ArrowsDownUp, CaretDown, CaretUp, DotsSixVertical, Info } from "@phosph
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shadcn/ui/tooltip";
 import { TableHead, TableHeader, TableRow } from "@/shadcn/ui/table";
 import { AppTableColumn, AppTableSortDirection } from "./AppTable.types";
+import { AppTableColumnMenu } from "./AppTableColumnMenu";
 import { cn } from "@/lib/utils";
 import {
   HEADER_ROW_CLASS,
@@ -29,6 +30,7 @@ interface SortableHeaderCellProps<TRow> {
   sortOrder?: AppTableSortDirection;
   onSort?: (col: string, dir: AppTableSortDirection) => void;
   stickyHeader?: boolean;
+  onHideColumn: (key: string) => void;
 }
 
 function SortableHeaderCell<TRow>({
@@ -36,6 +38,7 @@ function SortableHeaderCell<TRow>({
   sortBy,
   sortOrder,
   onSort,
+  onHideColumn,
 }: SortableHeaderCellProps<TRow>) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id: column.key,
@@ -69,43 +72,45 @@ function SortableHeaderCell<TRow>({
   };
 
   return (
-    <TableHead
-      ref={setNodeRef}
-      style={style}
-      className={cn(
-        "h-auto select-none whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground",
-        isSortable && "cursor-pointer hover:text-foreground transition-colors",
-        column.headerClassName,
-      )}
-      onClick={handleSortClick}
-    >
-      <div className="flex items-center gap-1">
-        <span
-          {...attributes}
-          {...listeners}
-          onClick={(e) => e.stopPropagation()}
-          className={DRAG_HANDLE_CLASS}
-          suppressHydrationWarning
-        >
-          <DotsSixVertical className="h-3.5 w-3.5" />
-        </span>
-
-        {column.header}
-
-        <SortIcon />
-
-        {column.headerTooltip && (
-          <Tooltip>
-            <TooltipTrigger asChild onClick={(e) => e.stopPropagation()}>
-              <Info className="h-3 w-3 text-muted-foreground/60 hover:text-muted-foreground cursor-pointer" />
-            </TooltipTrigger>
-            <TooltipContent side="bottom" className="max-w-xs text-xs">
-              {column.headerTooltip}
-            </TooltipContent>
-          </Tooltip>
+    <AppTableColumnMenu onHide={() => onHideColumn(column.key)}>
+      <TableHead
+        ref={setNodeRef}
+        style={style}
+        className={cn(
+          "h-auto select-none whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground",
+          isSortable && "cursor-pointer hover:text-foreground transition-colors",
+          column.headerClassName,
         )}
-      </div>
-    </TableHead>
+        onClick={handleSortClick}
+      >
+        <div className="flex items-center gap-1">
+          <span
+            {...attributes}
+            {...listeners}
+            onClick={(e) => e.stopPropagation()}
+            className={DRAG_HANDLE_CLASS}
+            suppressHydrationWarning
+          >
+            <DotsSixVertical className="h-3.5 w-3.5" />
+          </span>
+
+          {column.header}
+
+          <SortIcon />
+
+          {column.headerTooltip && (
+            <Tooltip>
+              <TooltipTrigger asChild onClick={(e) => e.stopPropagation()}>
+                <Info className="h-3 w-3 text-muted-foreground/60 hover:text-muted-foreground cursor-pointer" />
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="max-w-xs text-xs">
+                {column.headerTooltip}
+              </TooltipContent>
+            </Tooltip>
+          )}
+        </div>
+      </TableHead>
+    </AppTableColumnMenu>
   );
 }
 
@@ -118,6 +123,7 @@ interface AppTableHeaderProps<TRow> {
   sortOrder?: AppTableSortDirection;
   onSort?: (col: string, dir: AppTableSortDirection) => void;
   stickyHeader?: boolean;
+  onHideColumn: (key: string) => void;
 }
 
 export function AppTableHeader<TRow>({
@@ -127,6 +133,7 @@ export function AppTableHeader<TRow>({
   sortOrder,
   onSort,
   stickyHeader,
+  onHideColumn,
 }: AppTableHeaderProps<TRow>) {
   const orderedColumns = columnOrder
     .map((key) => columns.find((c) => c.key === key))
@@ -144,6 +151,7 @@ export function AppTableHeader<TRow>({
               sortOrder={sortOrder}
               onSort={onSort}
               stickyHeader={stickyHeader}
+              onHideColumn={onHideColumn}
             />
           ))}
         </TableRow>

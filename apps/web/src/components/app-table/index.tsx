@@ -16,6 +16,7 @@ import { AppTableProps } from "./AppTable.types";
 import { AppTableHeader } from "./AppTableHeader";
 import { AppTableBody } from "./AppTableBody";
 import { AppTableFooter } from "./AppTableFooter";
+import { AppTableVisibilityPanel } from "./AppTableVisibilityPanel";
 import { cn } from "@/lib/utils";
 import { TABLE_WRAPPER_CLASS } from "./utils";
 import { Table } from "@/shadcn/ui/table";
@@ -36,8 +37,32 @@ export function AppTable<TRow>({
   stickyHeader,
   showFooter,
 }: AppTableProps<TRow>) {
-  const visibleColumns = columns.filter((c) => !c.hidden);
-  const [columnOrder, setColumnOrder] = useState<string[]>(() => visibleColumns.map((c) => c.key));
+  const allColumns = columns.filter((c) => !c.hidden);
+
+  const [columnOrder, setColumnOrder] = useState<string[]>(() => allColumns.map((c) => c.key));
+
+  // true = visible, false = hidden
+  const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(allColumns.map((c) => [c.key, true])),
+  );
+
+  const visibleColumns = allColumns.filter((c) => columnVisibility[c.key]);
+
+  const handleHideColumn = (key: string) => {
+    setColumnVisibility((prev) => ({ ...prev, [key]: false }));
+  };
+
+  const handleToggleColumn = (key: string) => {
+    setColumnVisibility((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const handleHideAll = () => {
+    setColumnVisibility((prev) => Object.fromEntries(Object.keys(prev).map((k) => [k, false])));
+  };
+
+  const handleShowAll = () => {
+    setColumnVisibility((prev) => Object.fromEntries(Object.keys(prev).map((k) => [k, true])));
+  };
 
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
@@ -59,20 +84,32 @@ export function AppTable<TRow>({
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <div className={TABLE_WRAPPER_CLASS}>
+        {/* ─── Toolbar ──────────────────────────────────────────────────── */}
+        <div className="flex items-center justify-end border-b border-border px-3 py-1.5">
+          <AppTableVisibilityPanel
+            columns={allColumns}
+            columnVisibility={columnVisibility}
+            onToggle={handleToggleColumn}
+            onHideAll={handleHideAll}
+            onShowAll={handleShowAll}
+          />
+        </div>
+
         <div className={cn("overflow-x-auto", stickyHeader && "overflow-y-auto max-h-[600px]")}>
           <Table>
             <AppTableHeader
               columns={visibleColumns}
-              columnOrder={columnOrder}
+              columnOrder={columnOrder.filter((k) => columnVisibility[k])}
               sortBy={sortBy}
               sortOrder={sortOrder}
               onSort={onSort}
               stickyHeader={stickyHeader}
+              onHideColumn={handleHideColumn}
             />
 
             <AppTableBody
               columns={visibleColumns}
-              columnOrder={columnOrder}
+              columnOrder={columnOrder.filter((k) => columnVisibility[k])}
               data={data}
               keyExtractor={keyExtractor}
               isLoading={isLoading}
@@ -84,7 +121,11 @@ export function AppTable<TRow>({
             />
 
             {showFooter && (
-              <AppTableFooter columns={visibleColumns} columnOrder={columnOrder} data={data} />
+              <AppTableFooter
+                columns={visibleColumns}
+                columnOrder={columnOrder.filter((k) => columnVisibility[k])}
+                data={data}
+              />
             )}
           </Table>
         </div>
