@@ -14,12 +14,14 @@ These rules are mandatory per CLAUDE.md.
 **Rule:** Routes → Repo → DAL → DB. Never skip or reverse layers.
 
 **Violations:**
+
 - Routes importing directly from Drizzle
 - Routes importing directly from DAL
 - Repo importing directly from Drizzle
 - Web components importing directly from worker DAL/Repo
 
 **Detection:**
+
 ```
 File: apps/worker/src/routes/*.ts
 - ❌ import { drizzle } from "drizzle-orm"
@@ -27,7 +29,7 @@ File: apps/worker/src/routes/*.ts
 - ✅ import { SomeRepo } from "../repositories"
 
 File: apps/web/src/**/*.tsx
-- ❌ import { SomeDAL } from "@app/worker" 
+- ❌ import { SomeDAL } from "@app/worker"
 - ✅ Use apiClient through -data.ts query/mutation hooks
 ```
 
@@ -40,12 +42,14 @@ File: apps/web/src/**/*.tsx
 **Rule:** All types and Zod schemas belong in `packages/schemas/src/` only.
 
 **Violations:**
+
 - Type definitions in `apps/web/src/`
 - Type definitions in `apps/worker/src/`
 - Zod schemas outside `packages/schemas/`
 - Request/Response types in app folders instead of schemas
 
 **Detection:**
+
 ```
 File: apps/worker/src/**/*.ts
 - ❌ type GetUserRequest = { id: string }
@@ -66,12 +70,14 @@ File: apps/web/src/**/*.tsx
 **Rule:** Never use `console.log`. Always use `AppLogger`.
 
 **Violations:**
+
 - `console.log(...)`
 - `console.error(...)`
 - `console.warn(...)`
 - `console.debug(...)`
 
 **Detection:**
+
 ```
 - ❌ console.log("debugging")
 - ✅ AppLogger.info({ category: LogCategory.X, action: LogAction.Y, message: "..." })
@@ -86,6 +92,7 @@ File: apps/web/src/**/*.tsx
 **Rule:** No implicit `any`, no `@ts-ignore`, no non-null assertions without guards.
 
 **Violations:**
+
 - `// @ts-ignore` comment
 - `as any` type assertion
 - `as unknown as SomeType` without proper narrowing
@@ -93,6 +100,7 @@ File: apps/web/src/**/*.tsx
 - Non-null assertion `!` without preceding null check
 
 **Detection:**
+
 ```
 - ❌ const x: any = value
 - ❌ const y = x as unknown as string
@@ -109,11 +117,13 @@ File: apps/web/src/**/*.tsx
 **Rule:** Use consistent import patterns for same-layer imports.
 
 **Violations:**
+
 - Mixing relative paths with alias imports in same file
 - Using `../../..` for long relative imports (use alias instead)
 - Incorrect alias usage (`@app/` for schemas, relative for same-folder)
 
 **Detection:**
+
 ```
 File: apps/worker/src/routes/NotesRoutes.ts (golden file)
 - ✅ import { NotesRepo } from "../repositories"
@@ -130,11 +140,13 @@ File: apps/worker/src/routes/NotesRoutes.ts (golden file)
 **Rule:** After ANY schema change, run `pnpm db:generate` and `pnpm db:migrate` immediately.
 
 **Violations:**
+
 - Schema change in `apps/worker/src/db/tables.ts` without `pnpm db:generate` command
 - Schema change without migration file committed alongside
 - Migration file missing or in separate commit
 
 **Detection:**
+
 ```
 PR contains changes to: apps/worker/src/db/tables.ts
 But does NOT contain:
@@ -151,6 +163,7 @@ But does NOT contain:
 **Rule:** Files must live in correct folders per CLAUDE.md architecture.
 
 **Violations:**
+
 - DAL file in `repositories/` folder
 - Repo file in `data-access-layer/` folder
 - Route file not in `routes/` folder
@@ -158,6 +171,7 @@ But does NOT contain:
 - Co-located components not prefixed with `-`
 
 **Detection:**
+
 ```
 - ❌ apps/worker/src/repositories/NotesDAL.ts
 - ✅ apps/worker/src/data-access-layer/NotesDAL.ts
@@ -178,6 +192,7 @@ But does NOT contain:
 **Rule:** Follow naming conventions per layer and language.
 
 **Violations:**
+
 - Class names not PascalCase (`notesRepo` instead of `NotesRepo`)
 - Function names not camelCase (`GetNotes` instead of `getNotes`)
 - Constants not SCREAMING_SNAKE_CASE (if not PascalCase)
@@ -185,6 +200,7 @@ But does NOT contain:
 - Repo method names inconsistent with pattern
 
 **Detection:**
+
 ```
 Database columns:
 - ❌ userName (should be snake_case in DB)
@@ -207,19 +223,21 @@ TypeScript classes/functions:
 **Rule:** Every DAL method must have try/catch with proper logging.
 
 **Violations:**
+
 - DAL method without try/catch block
 - Error caught but not logged
 - AppLogger call without required fields (category, action, message)
 - Missing `response.isSuccess` flag initialization
 
 **Detection:**
+
 ```
 - ❌ async getNotes() { return await this.db.select() }
-- ✅ async getNotes() { 
+- ✅ async getNotes() {
       const response = { isSuccess: false }
-      try { ... response.isSuccess = true } 
+      try { ... response.isSuccess = true }
       catch (error) { AppLogger.error({ ... }) }
-      return response 
+      return response
     }
 ```
 
@@ -232,16 +250,18 @@ TypeScript classes/functions:
 **Rule:** Every `useMutation` must have explicit `onError` handler.
 
 **Violations:**
+
 - `useMutation` without `onError` callback
 - `onError` callback that is empty: `onError: () => {}`
 - Error silently swallowed without user feedback
 
 **Detection:**
+
 ```
 File: apps/web/src/**/*.tsx
 - ❌ useMutation({ mutationFn: ..., onSuccess: ... })
 - ❌ useMutation({ mutationFn: ..., onError: () => {} })
-- ✅ useMutation({ 
+- ✅ useMutation({
       mutationFn: ...,
       onError: (error) => { toast.error("Failed to...") }
     })
@@ -256,12 +276,14 @@ File: apps/web/src/**/*.tsx
 **Rule:** Use Tailwind utilities only. No inline styles except for dynamic values impossible in Tailwind.
 
 **Violations:**
+
 - `style={{ marginTop: "16px" }}` (use Tailwind class instead)
 - Inline styles for static values
 - CSS modules in app folders
 - styled-components usage
 
 **Detection:**
+
 ```
 - ❌ <div style={{ padding: "16px" }}>
 - ✅ <div className="p-4">
@@ -281,11 +303,13 @@ File: apps/web/src/**/*.tsx
 **Rule:** Never use arbitrary Tailwind values for spacing/sizing that exist in the design scale.
 
 **Violations:**
+
 - `px-[12px]`, `w-[200px]`, `h-[50px]`, `gap-[13px]` (should use standard scale)
 - Hardcoded pixel values in Tailwind when standard class exists
 - Color hex codes instead of Tailwind color scale
 
 **Detection Pattern:**
+
 ```regex
 className=.*(?:w|h|p|m|gap|px|py|pt|pb|pl|pr)\-\[\d+px\]
 style=.*:\s*['"]?\d+px
@@ -293,6 +317,7 @@ className=.*\[\#[0-9A-Fa-f]{6}\]
 ```
 
 **Examples:**
+
 ```
 - ❌ <div className="px-[12px] w-[200px]">
 - ✅ <div className="px-3 w-48">
@@ -305,6 +330,7 @@ className=.*\[\#[0-9A-Fa-f]{6}\]
 ```
 
 **Spacing Scale Reference:**
+
 ```
 2 (8px), 3 (12px), 4 (16px), 6 (24px), 8 (32px), 12 (48px), 16 (64px), 20 (80px), 24 (96px)
 ```
@@ -318,17 +344,20 @@ className=.*\[\#[0-9A-Fa-f]{6}\]
 **Rule:** Use project color scale, not hardcoded hex values.
 
 **Violations:**
+
 - Direct hex colors in classes or inline styles
 - Arbitrary color values `[#FF5733]`
 - Brand colors hardcoded instead of using variables
 
 **Detection Pattern:**
+
 ```regex
 \[\#[0-9A-Fa-f]{6}\]
 style=.*color:\s*['#]
 ```
 
 **Examples:**
+
 ```
 - ❌ className="bg-[#1a1a1a]"
 - ✅ className="bg-slate-900"
@@ -355,12 +384,14 @@ To add a new custom rule:
    - Add severity tag: `[CRITICAL]`, `[WARNING]`, or `[INFO]`
 
 **Example format:**
+
 ```markdown
 ### 2.X Your New Rule [SEVERITY]
 
 **Rule:** Clear description of what's enforced.
 
 **Violations:**
+
 - Specific violation 1
 - Specific violation 2
 
@@ -371,9 +402,10 @@ pattern_here
 
 **Examples:**
 \`\`\`
+
 - ❌ Bad example
 - ✅ Good example
-\`\`\`
+  \`\`\`
 
 **Fix:** How to correct it.
 ```
@@ -382,17 +414,18 @@ pattern_here
 
 ## 4. SEVERITY DEFINITIONS
 
-| Level | Meaning | Action | Symbol |
-|-------|---------|--------|--------|
-| **CRITICAL** | Breaks architecture, type safety, or production safety | Must fix before merge | 🔴 |
-| **WARNING** | Inconsistent with standards but doesn't break functionality | Should fix before merge | 🟡 |
-| **INFO** | Best practice suggestion or minor improvement | Nice to have | 🔵 |
+| Level        | Meaning                                                     | Action                  | Symbol |
+| ------------ | ----------------------------------------------------------- | ----------------------- | ------ |
+| **CRITICAL** | Breaks architecture, type safety, or production safety      | Must fix before merge   | 🔴     |
+| **WARNING**  | Inconsistent with standards but doesn't break functionality | Should fix before merge | 🟡     |
+| **INFO**     | Best practice suggestion or minor improvement               | Nice to have            | 🔵     |
 
 ---
 
 ## 5. WORKFLOW INTEGRATION
 
 The Pattern Enforcer workflow (`pattern-enforcer.yml`) automatically:
+
 1. Reads this file on every PR
 2. Checks only the PR diff (token-efficient, not entire codebase)
 3. Posts inline comments for each violation with:
@@ -406,6 +439,7 @@ The Pattern Enforcer workflow (`pattern-enforcer.yml`) automatically:
 ### How to Update Rules
 
 **Just edit this file** (`pattern-rules.md`). No workflow changes needed:
+
 1. Add/modify rules in the sections above
 2. Commit and push
 3. Next PR will automatically use the updated rules
