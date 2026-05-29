@@ -10,6 +10,7 @@ export enum LogAction {
   // Auth
   VerifyToken = "VerifyToken",
   SyncClerkUser = "SyncClerkUser",
+  SignOut = "SignOut",
 
   // User
   GetUserDetails = "GetUserDetails",
