@@ -38,6 +38,7 @@ Token **values** are overridden per app in `apps/web/src/styles.css`.
 ## Token reference
 
 ### 1. shadcn tokens
+
 These are owned by shadcn/ui. Names and semantics are fixed by the library.
 Override values only.
 
@@ -95,6 +96,7 @@ TOKEN                     SEMANTIC ROLE
 ---
 
 ### 2. Extended semantic tokens
+
 These are gaps that shadcn does not cover but every serious product app needs.
 Scaffold defines the names. Apps override the values.
 
@@ -174,14 +176,17 @@ Do not use it for warnings or highlights unrelated to AI output.
 ## How to start a new app on this scaffold
 
 ### Step 1 — Copy styles.css
+
 Copy `apps/web/src/styles.css` from the scaffold into your new app's
 `apps/web/src/` directory. Do not rename it.
 
 ### Step 2 — Override the palette
+
 In `styles.css`, change only the **values** inside `:root {}` and `.dark {}`.
 Do not add or remove variable names from these two blocks.
 
 Minimum changes per app:
+
 - `--primary` + `--primary-foreground` (your brand colour)
 - `--background`, `--foreground` (surface personality — warm, cool, neutral)
 - `--card`, `--secondary`, `--muted`, `--border`, `--sidebar` (cascade from background)
@@ -192,6 +197,7 @@ Minimum changes per app:
 - Font: change the `@import` and `--font-sans` value
 
 ### Step 3 — Add app-specific tokens (if needed)
+
 Below the scaffold token block, add a clearly separated section:
 
 ```css
@@ -201,6 +207,7 @@ Below the scaffold token block, add a clearly separated section:
 ```
 
 ### Step 4 — Start the Claude Design session
+
 Paste this system prompt before describing any screen:
 
 ---
@@ -246,11 +253,11 @@ Rules:
 
 ## Token count summary
 
-| Group              | Tokens | Stable? |
-|--------------------|--------|---------|
-| shadcn core        | 28     | ✅ Fixed by shadcn |
-| shadcn sidebar     | 8      | ✅ Fixed by shadcn |
-| shadcn charts      | 5      | ✅ Fixed by shadcn |
-| Extended scaffold  | 14     | ✅ Fixed by this file |
-| App-specific       | varies | ⚠️ Per app, namespaced |
-| **Total (scaffold)**| **55** | |
+| Group                | Tokens | Stable?                |
+| -------------------- | ------ | ---------------------- |
+| shadcn core          | 28     | ✅ Fixed by shadcn     |
+| shadcn sidebar       | 8      | ✅ Fixed by shadcn     |
+| shadcn charts        | 5      | ✅ Fixed by shadcn     |
+| Extended scaffold    | 14     | ✅ Fixed by this file  |
+| App-specific         | varies | ⚠️ Per app, namespaced |
+| **Total (scaffold)** | **55** |                        |
