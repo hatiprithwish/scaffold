@@ -14,6 +14,7 @@
     "lint:fix": "eslint src --fix"
   },
   "dependencies": {
+    "@app/api-client": "workspace:*",
     "@app/schemas": "workspace:*",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^9.0.0",

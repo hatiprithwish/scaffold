@@ -1,18 +1,12 @@
 {
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "moduleResolution": "Bundler",
-    "module": "ESNext",
-    "target": "ES2022",
-    "skipLibCheck": true,
-    "strictNullChecks": true,
     "strict": true,
-    "types": ["vite/client"],
     "paths": {
       "@/*": ["./src/*"],
       "@app/schemas": ["../../packages/schemas/src/index.ts"],
       "@app/api-client": ["../../packages/api-client/src/index.ts"]
     }
   },
-  "include": ["src"]
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.d.ts", "nativewind-env.d.ts"]
 }

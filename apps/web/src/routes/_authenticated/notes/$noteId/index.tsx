@@ -2,10 +2,12 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@clerk/tanstack-react-start";
 import { useState } from "react";
-import { NotesQueries, useUpdateNote, useDeleteNote } from "../-data";
+import { NotesQueries, useUpdateNote, useDeleteNote } from "@app/api-client";
+import { apiClient } from "@/providers/apiClient";
 import NoteHeader from "./-NoteHeader";
 import ViewNote from "./-ViewNote";
 import { NoteForm } from "./-NoteForm";
+import { toast } from "sonner";
 import type * as Schemas from "@app/schemas";
 
 export const Route = createFileRoute("/_authenticated/notes/$noteId/")({
@@ -18,28 +20,32 @@ function NoteDetailPage() {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
 
-  const { data, isPending, isError } = useQuery(NotesQueries.detail(noteId, getToken));
+  const { data, isPending, isError } = useQuery(
+    NotesQueries.detail(noteId, apiClient, getToken),
+  );
   const note = data?.note;
 
-  const updateNote = useUpdateNote();
-  const deleteNote = useDeleteNote();
+  const updateNote = useUpdateNote(apiClient, getToken);
+  const deleteNote = useDeleteNote(apiClient, getToken);
 
   if (isPending) return <div>Loading...</div>;
   if (isError || !note) return <div>Note not found.</div>;
 
   // DEV_NOTE: mutateAsync used here — need to await save before closing the form.
   async function handleSubmit(value: Schemas.NoteBase) {
-    await updateNote.mutateAsync({
-      id: noteId,
-      body: { note: value },
-    });
-    setIsEditing(false);
+    try {
+      await updateNote.mutateAsync({ id: noteId, body: { note: value } });
+      setIsEditing(false);
+    } catch {
+      toast.error("Failed to update note. Please try again.");
+    }
   }
 
   // DEV_NOTE: mutate (not mutateAsync) — no need to await, navigation happens in onSuccess.
   function handleDelete() {
     deleteNote.mutate(noteId, {
       onSuccess: () => navigate({ to: "/notes" }),
+      onError: () => toast.error("Failed to delete note. Please try again."),
     });
   }
 

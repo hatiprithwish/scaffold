@@ -1,6 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useCreateNote } from "../-data";
+import { useAuth } from "@clerk/tanstack-react-start";
+import { useCreateNote } from "@app/api-client";
+import { apiClient } from "@/providers/apiClient";
 import { NoteForm } from "../$noteId/-NoteForm";
+import { toast } from "sonner";
+import type * as Schemas from "@app/schemas";
 
 export const Route = createFileRoute("/_authenticated/notes/new/")({
   component: NewNotePage,
@@ -8,7 +12,17 @@ export const Route = createFileRoute("/_authenticated/notes/new/")({
 
 function NewNotePage() {
   const navigate = useNavigate();
-  const createNote = useCreateNote();
+  const { getToken } = useAuth();
+  const createNote = useCreateNote(apiClient, getToken);
+
+  async function handleSubmit(value: Schemas.NoteBase) {
+    try {
+      await createNote.mutateAsync({ note: value });
+      navigate({ to: "/notes" });
+    } catch {
+      toast.error("Failed to create note. Please try again.");
+    }
+  }
 
   return (
     <div className="mx-auto max-w-2xl p-6 flex flex-col gap-6">
@@ -17,10 +31,7 @@ function NewNotePage() {
         currentTitle="New Note"
         currentBody={null}
         submitLabel="Create note"
-        onSubmit={async (value) => {
-          await createNote.mutateAsync({ note: value });
-          navigate({ to: "/notes" });
-        }}
+        onSubmit={handleSubmit}
         onCancel={() => navigate({ to: "/notes" })}
       />
     </div>
