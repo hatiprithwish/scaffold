@@ -20,9 +20,7 @@ function NoteDetailPage() {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
 
-  const { data, isPending, isError } = useQuery(
-    NotesQueries.detail(noteId, apiClient, getToken),
-  );
+  const { data, isPending, isError } = useQuery(NotesQueries.detail(noteId, apiClient, getToken));
   const note = data?.note;
 
   const updateNote = useUpdateNote(apiClient, getToken);

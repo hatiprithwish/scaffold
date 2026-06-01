@@ -12,8 +12,7 @@ export class NotesQueries {
   static list(client: ApiClientFn, getToken: GetTokenFn) {
     return queryOptions({
       queryKey: NotesQueries.keys.all(),
-      queryFn: ({ signal }) =>
-        client<Schemas.GetNotesApiResponse>("/notes", getToken, { signal }),
+      queryFn: ({ signal }) => client<Schemas.GetNotesApiResponse>("/notes", getToken, { signal }),
     });
   }
 
@@ -60,8 +59,7 @@ export function useUpdateNote(client: ApiClientFn, getToken: GetTokenFn) {
 export function useDeleteNote(client: ApiClientFn, getToken: GetTokenFn) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) =>
-      client<void>(`/notes/${id}`, getToken, { method: "DELETE" }),
+    mutationFn: (id: number) => client<void>(`/notes/${id}`, getToken, { method: "DELETE" }),
     onSuccess: async (_data, id) => {
       queryClient.removeQueries({ queryKey: NotesQueries.keys.detail(id) });
       await queryClient.invalidateQueries({ queryKey: NotesQueries.keys.all() });

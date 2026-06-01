@@ -15,9 +15,7 @@ export default function NoteDetailScreen() {
   const [editTitle, setEditTitle] = useState("");
   const [editBody, setEditBody] = useState("");
 
-  const { data, isPending, isError } = useQuery(
-    NotesQueries.detail(noteId, apiClient, getToken),
-  );
+  const { data, isPending, isError } = useQuery(NotesQueries.detail(noteId, apiClient, getToken));
   const note = data?.note;
 
   const updateNote = useUpdateNote(apiClient, getToken);

@@ -2,6 +2,7 @@
   "name": "scaffold",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@10.28.1",
   "scripts": {
     "dev": "turbo run dev --filter=web --filter=worker",
     "dev:mobile": "turbo run dev --filter=mobile",

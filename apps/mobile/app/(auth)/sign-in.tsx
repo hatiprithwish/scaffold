@@ -52,9 +52,7 @@ export default function SignInScreen() {
         onPress={handleSignIn}
         disabled={isSubmitting}
       >
-        <Text className="text-white font-medium">
-          {isSubmitting ? "Signing in..." : "Sign in"}
-        </Text>
+        <Text className="text-white font-medium">{isSubmitting ? "Signing in..." : "Sign in"}</Text>
       </Pressable>
     </View>
   );
