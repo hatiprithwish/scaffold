@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@clerk/tanstack-react-start";
-import { NotesQueries } from "./-data";
+import { NotesQueries } from "@app/api-client";
+import { apiClient } from "@/providers/apiClient";
 import { Button } from "@/shadcn/ui/button";
 import NoteCard from "./-NoteCard";
 
@@ -11,7 +12,7 @@ export const Route = createFileRoute("/_authenticated/notes/")({
 
 function NotesPage() {
   const { getToken } = useAuth();
-  const { data, isPending, isError } = useQuery(NotesQueries.list(getToken));
+  const { data, isPending, isError } = useQuery(NotesQueries.list(apiClient, getToken));
   const notes = data?.notes ?? [];
 
   if (isPending) return <div>Loading...</div>;
