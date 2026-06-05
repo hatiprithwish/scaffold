@@ -8,6 +8,12 @@
   "vars": {
     "ALLOWED_CORS_ORIGIN": "http://localhost:3000",
   },
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true,
+    },
+  },
   "d1_databases": [
     {
       "binding": "DB",
@@ -23,6 +29,12 @@
       "vars": {
         "ALLOWED_CORS_ORIGIN": "http://localhost:3000,https://scaffold-web-staging.hatiprithwish.workers.dev",
       },
+      "observability": {
+        "logs": {
+          "enabled": true,
+          "invocation_logs": true,
+        },
+      },
       "d1_databases": [
         {
           "binding": "DB",
@@ -37,6 +49,12 @@
       "name": "scaffold-worker",
       "vars": {
         "ALLOWED_CORS_ORIGIN": "https://scaffold-web.hatiprithwish.workers.dev",
+      },
+      "observability": {
+        "logs": {
+          "enabled": true,
+          "invocation_logs": true,
+        },
       },
       "d1_databases": [
         {
