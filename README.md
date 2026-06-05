@@ -1,27 +1,18 @@
 ## Setup
 
-### Prerequisites
-
-- Node.js 20+
-- pnpm
-- Cloudflare account + Wrangler CLI (`pnpm i -g wrangler`)
-- Clerk account
-
 ### Frontend (`apps/web`)
 
-- Copy `apps/web/wrangler.jsonc` and set `VITE_API_URL` to your worker's local or deployed URL
-- Add Clerk secrets via `wrangler secret put CLERK_PUBLISHABLE_KEY` (or set in Cloudflare dashboard for deployed envs)
-- `pnpm --filter web dev` — starts dev server on `localhost:3000`
+- Change worker name in `apps/web/wrangler.jsonc` and `package.json`
+- Copy `.env.example` and populate the secrets. You will need to create a Sentry project for this, although you can reuse the "Project Token" (Stored in Bitwarden).
+- Add secrets via `wrangler secret put <KEY_NAME>`
 
 ### Backend (`apps/worker`)
 
-- Create a D1 database: `wrangler d1 create scaffold-db`
+- Change worker name in `apps/web/wrangler.jsonc` and `package.json`
+- Create a D1 database
 - Update `database_id` in `apps/worker/wrangler.jsonc` with the returned ID
-- Add secrets:
-  - `wrangler secret put CLERK_PUBLISHABLE_KEY`
-  - `wrangler secret put CLERK_SECRET_KEY`
-- Run migrations: `pnpm --filter worker db:migrate:local`
-- `pnpm --filter worker dev` — starts API on `localhost:8787`
+- Add secrets via `wrangler secret put <KEY_NAME>`
+- Run migrations: `pnpm --filter worker db:migrate`
 
 ### Run everything
 
