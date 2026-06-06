@@ -4,7 +4,7 @@ on:
   push:
     branches: [staging]
     paths:
-      - "apps/worker/**"
+      - "apps/backend/**"
       - "packages/schemas/**"
 
 permissions:
@@ -48,7 +48,7 @@ jobs:
             key="${line%%=*}"
             key="${key%% *}"
             [[ -z "${!key}" ]] && missing+=("$key")
-          done < apps/worker/.dev.vars.example
+          done < apps/backend/.dev.vars.example
           if [[ ${#missing[@]} -gt 0 ]]; then
             echo "❌ Missing secrets: ${missing[*]}"
             exit 1
@@ -63,5 +63,5 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: apps/worker
+          workingDirectory: apps/backend
           command: deploy --env staging

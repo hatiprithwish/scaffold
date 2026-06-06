@@ -6,13 +6,13 @@
 - Copy `.env.example` and populate the secrets. You will need to create a Sentry project for this, although you can reuse the "Project Token" (Stored in Bitwarden).
 - Add secrets via `wrangler secret put <KEY_NAME>`
 
-### Backend (`apps/worker`)
+### Backend (`apps/backend`)
 
 - Change worker name in `apps/web/wrangler.jsonc` and `package.json`
 - Create a D1 database
-- Update `database_id` in `apps/worker/wrangler.jsonc` with the returned ID
+- Update `database_id` in `apps/backend/wrangler.jsonc` with the returned ID
 - Add secrets via `wrangler secret put <KEY_NAME>`
-- Run migrations: `pnpm --filter worker db:migrate`
+- Run migrations: `pnpm --filter backend db:migrate`
 
 ### Run everything
 
@@ -36,7 +36,7 @@ pnpm dev
 - tailwind-merge — Merges Tailwind classes intelligently
 - tw-animate-css — Tailwind animation utilities
 - @phosphor-icons/react — Icon library
-- react-hook-form — Form handling 
+- react-hook-form — Form handling
 - @hookform/resolvers — RHF validation resolvers
 - Zod — Schema validation & TypeScript types
 - @dnd-kit/core — Headless drag-and-drop
