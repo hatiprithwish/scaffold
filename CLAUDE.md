@@ -23,9 +23,9 @@ When implementing any layer, read the corresponding golden file first:
 
 | Layer               | Golden file                                          |
 | ------------------- | ---------------------------------------------------- |
-| DAL                 | `apps/worker/src/data-access-layer/NotesDAL.ts`      |
-| Repository          | `apps/worker/src/repositories/NotesRepo.ts`          |
-| Routes              | `apps/worker/src/routes/NotesRoutes.ts`              |
+| DAL                 | `apps/backend/src/data-access-layer/NotesDAL.ts`     |
+| Repository          | `apps/backend/src/repositories/NotesRepo.ts`         |
+| Routes              | `apps/backend/src/routes/NotesRoutes.ts`             |
 | Frontend data layer | `apps/web/src/routes/_authenticated/notes/-data.ts`  |
 | Frontend page       | `apps/web/src/routes/_authenticated/notes/index.tsx` |
 
@@ -101,7 +101,7 @@ Wait for explicit confirmation. Do not proceed without it.
 **Monorepo:** pnpm workspaces
 
 - `apps/web` — TanStack Start (React 19, Vite, Cloudflare Workers)
-- `apps/worker` — Hono API (Cloudflare Workers, Drizzle ORM, D1)
+- `apps/backend` — Hono API (Cloudflare Workers, Drizzle ORM, D1)
 - `packages/schemas` — shared Zod schemas + TypeScript types
 
 **Approved packages — use these, never introduce alternatives:**
@@ -139,7 +139,7 @@ Wait for explicit confirmation. Do not proceed without it.
 - `index.ts` — re-export everything
 - Export from `packages/schemas/src/index.ts`
 
-**Step 2 — `apps/worker/src/`**
+**Step 2 — `apps/backend/src/`**
 
 - `db/tables.ts` — add Drizzle table definition to existing file
 - `data-access-layer/<Feature>DAL.ts` — raw DB operations only
@@ -171,12 +171,12 @@ Routes → Repo → DAL → DB
 - [ ] Define `<Feature>StatusIntEnum`, `<Feature>StatusLabelEnum`, `<FEATURE>_STATUS_LABEL_MAP` in `<Feature>Common.ts` for any status field
 - [ ] Create `packages/schemas/src/<feature>/` with all 5 files + `index.ts`
 - [ ] Export from `packages/schemas/src/index.ts`
-- [ ] Add DB table in `apps/worker/src/db/tables.ts`
+- [ ] Add DB table in `apps/backend/src/db/tables.ts`
 - [ ] Run `pnpm db:generate` then `pnpm db:migrate`
 - [ ] Create `<Feature>DAL.ts`
 - [ ] Create `<Feature>Repo.ts`
 - [ ] Create `<Feature>Routes.ts`
-- [ ] Mount routes in `apps/worker/src/index.ts`
+- [ ] Mount routes in `apps/backend/src/index.ts`
 - [ ] Create `-data.ts` in web route folder
 - [ ] Create page components
 
@@ -219,14 +219,14 @@ export interface NoteWithStatus extends Note {
 }
 ```
 
-**`apps/worker/src/db/tables.ts`:**
+**`apps/backend/src/db/tables.ts`:**
 
 ```ts
 // Use raw integer literal for default — drizzle-kit cannot resolve enum imports at codegen time
 status: t.integer().$type<NoteStatusIntEnum>().notNull().default(1), // NoteStatusIntEnum.Draft
 ```
 
-**`apps/worker/src/repositories/<Feature>Repo.ts` — map int → label here, never in DAL:**
+**`apps/backend/src/repositories/<Feature>Repo.ts` — map int → label here, never in DAL:**
 
 ```ts
 private withStatusLabel(note: Schemas.Note): Schemas.NoteWithStatus {
@@ -238,7 +238,7 @@ private withStatusLabel(note: Schemas.Note): Schemas.NoteWithStatus {
 }
 ```
 
-**Golden example:** see `packages/schemas/src/notes/NotesCommon.ts` and `apps/worker/src/repositories/NotesRepo.ts`
+**Golden example:** see `packages/schemas/src/notes/NotesCommon.ts` and `apps/backend/src/repositories/NotesRepo.ts`
 
 **Rules:**
 
@@ -256,7 +256,7 @@ private withStatusLabel(note: Schemas.Note): Schemas.NoteWithStatus {
 
 `packages/schemas` is the single source of truth for all types and Zod schemas.
 
-- NEVER define a request or response type in `apps/web` or `apps/worker`
+- NEVER define a request or response type in `apps/web` or `apps/backend`
 - NEVER duplicate a type that already exists in `packages/schemas`
 - If a type is only used in one app today but could cross the boundary, it belongs in `packages/schemas`
 
@@ -409,12 +409,12 @@ If any item fails, fix it before outputting. Do not output and note the failure.
 ```bash
 pnpm dev                              # run all apps
 pnpm --filter web dev
-pnpm --filter worker dev
+pnpm --filter backend dev
 pnpm --filter web test
-pnpm --filter worker test
-pnpm --filter worker db:generate      # generate migration after schema change
-pnpm --filter worker db:migrate       # apply migration to remote
-pnpm --filter worker db:migrate:local # apply migration to local dev
+pnpm --filter backend test
+pnpm --filter backend db:generate      # generate migration after schema change
+pnpm --filter backend db:migrate       # apply migration to remote
+pnpm --filter backend db:migrate:local # apply migration to local dev
 ```
 
 ---

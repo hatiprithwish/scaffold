@@ -3,9 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev:worker": "pnpm --filter worker dev",
+    "dev:backend": "pnpm --filter backend dev",
     "dev:web": "pnpm --filter web dev",
-    "build:worker": "pnpm --filter worker build",
+    "build:backend": "pnpm --filter backend build",
     "build:web": "pnpm --filter web build",
     "lint": "pnpm -r lint",
     "lint:fix": "pnpm -r lint:fix",
