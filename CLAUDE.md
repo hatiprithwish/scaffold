@@ -30,7 +30,7 @@ Before using any third-party API: check the installed version in `package.json`,
 
 ## New feature checklist
 
-1. `packages/schemas/src/<feature>/` — `<Feature>Common.ts`, `ApiRequest.ts`, `ApiResponse.ts`, `DALRequest.ts`, `index.ts`; export from `packages/schemas/src/index.ts`. Add `LogCategory`/`LogAction` entries in `log.ts`. Status fields get the Status Enum Pattern (below).
+1. `packages/schemas/src/<feature>/` — `<Feature>Common.ts`, `ApiRequest.ts`, `ApiResponse.ts`, `DALRequest.ts`, `DALResponse.ts` (raw rows; the Repo maps them to the `ApiResponse` shapes), `index.ts`; export from `packages/schemas/src/index.ts`. Add `LogCategory`/`LogAction` entries in `log.ts`. Status fields get the Status Enum Pattern (below).
 2. `apps/backend/src/db/tables.ts` — add the table (see DB Tables below), then `pnpm --filter backend db:generate` immediately, commit the migration with the schema change.
 3. `data-access-layer/<Feature>DAL.ts` → `repositories/<Feature>Repo.ts` → `routes/<Feature>Routes.ts`, mounted in `apps/backend/src/index.ts`.
 4. `apps/web/src/routes/_authenticated/<feature>/` — `-data.ts`, `index.tsx`, `new/index.tsx` and `$id/index.tsx` if applicable, `-Component.tsx` co-located (prefixed `-`).
@@ -66,6 +66,8 @@ Before using any third-party API: check the installed version in `package.json`,
 
 ```bash
 pnpm dev                          # run all apps
+pnpm lint                         # eslint, every package (pre-commit)
+pnpm typecheck                    # tsc --noEmit, every package (pre-commit)
 pnpm --filter web dev
 pnpm --filter backend dev
 pnpm --filter web test

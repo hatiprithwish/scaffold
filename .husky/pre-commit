@@ -1,3 +1,5 @@
 pnpm format:check
+pnpm lint
+pnpm typecheck
 pnpm build:backend
 pnpm build:web
