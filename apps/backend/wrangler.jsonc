@@ -14,13 +14,14 @@
       "invocation_logs": true,
     },
   },
-  "d1_databases": [
+  // DEV_NOTE: Hyperdrive pools connections to Neon. Create the config with
+  // `wrangler hyperdrive create scaffold-db --connection-string="<neon-connection-string>"`
+  // and put the returned id below (and in each env). Local dev and tests skip Hyperdrive and connect
+  // straight to Postgres via CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE (see .env.example).
+  "hyperdrive": [
     {
-      "binding": "DB",
-      "database_name": "scaffold-db",
-      "database_id": "c950b22e-c50c-4840-bb9b-f91143980fe1",
-      "migrations_dir": "src/db/migrations",
-      "remote": true,
+      "binding": "HYPERDRIVE",
+      "id": "REPLACE_WITH_HYPERDRIVE_ID",
     },
   ],
   "env": {
@@ -35,13 +36,10 @@
           "invocation_logs": true,
         },
       },
-      "d1_databases": [
+      "hyperdrive": [
         {
-          "binding": "DB",
-          "database_name": "scaffold-db",
-          "database_id": "c950b22e-c50c-4840-bb9b-f91143980fe1",
-          "migrations_dir": "src/db/migrations",
-          "remote": true,
+          "binding": "HYPERDRIVE",
+          "id": "REPLACE_WITH_HYPERDRIVE_ID",
         },
       ],
     },
@@ -56,13 +54,10 @@
           "invocation_logs": true,
         },
       },
-      "d1_databases": [
+      "hyperdrive": [
         {
-          "binding": "DB",
-          "database_name": "scaffold-db",
-          "database_id": "c950b22e-c50c-4840-bb9b-f91143980fe1",
-          "migrations_dir": "src/db/migrations",
-          "remote": true,
+          "binding": "HYPERDRIVE",
+          "id": "REPLACE_WITH_HYPERDRIVE_ID",
         },
       ],
     },

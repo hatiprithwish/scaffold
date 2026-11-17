@@ -9,10 +9,14 @@
 ### Backend (`apps/backend`)
 
 - Change worker name in `apps/web/wrangler.jsonc` and `package.json`
-- Create a D1 database
-- Update `database_id` in `apps/backend/wrangler.jsonc` with the returned ID
+- Create a Neon project. Create a `dev` branch and a `test` branch alongside `main`
+- Create a Hyperdrive config pointing at the Neon `main` branch (use the direct, non-pooled connection string):
+  `pnpm --filter backend exec wrangler hyperdrive create scaffold-db --connection-string="<neon-connection-string>"`
+- Replace every `REPLACE_WITH_HYPERDRIVE_ID` in `apps/backend/wrangler.jsonc` with the returned ID
+- Copy `apps/backend/.env.example` to `apps/backend/.env` and fill in `DATABASE_URL` (main), `CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE` (dev branch, used by `wrangler dev`) and `TEST_DATABASE_URL` (test branch, used by `pnpm --filter backend test`)
+- Copy `apps/backend/.dev.vars.example` to `apps/backend/.dev.vars` and fill in the Clerk keys
 - Add secrets via `wrangler secret put <KEY_NAME>`
-- Run migrations: `pnpm --filter backend db:migrate`
+- Run migrations: `pnpm --filter backend db:migrate` (main) and `pnpm --filter backend db:migrate:test` (test branch). For the dev branch, run `db:migrate` with `DATABASE_URL` pointed at it
 
 ### Run everything
 
@@ -56,9 +60,11 @@ pnpm dev
 - Hono — Lightweight web framework (Cloudflare Workers compatible)
 - Cloudflare Workers — Serverless runtime
 - wrangler — Cloudflare CLI & local dev server
-- Drizzle ORM — Type-safe ORM for D1 (SQLite)
+- Drizzle ORM — Type-safe ORM for PostgreSQL
 - drizzle-kit — Schema generation & migration tools
-- Cloudflare D1 — Serverless SQLite database
+- Neon — Serverless PostgreSQL
+- Cloudflare Hyperdrive — Connection pooling between Workers and Neon
+- postgres (postgres.js) — PostgreSQL driver used through Hyperdrive
 - @hono/zod-validator — Zod schema validator middleware for Hono
 - @clerk/backend — Clerk backend SDK for token verification
 - @logtape/logtape — Structured logging

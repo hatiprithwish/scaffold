@@ -22,9 +22,9 @@
 
 ## Stack
 
-Monorepo (pnpm workspaces): `apps/web` (TanStack Start, React 19, Cloudflare Workers) · `apps/backend` (Hono, Drizzle, D1) · `packages/schemas` (Zod schemas + types, source of truth for all types — never duplicate one in an app).
+Monorepo (pnpm workspaces): `apps/web` (TanStack Start, React 19, Cloudflare Workers) · `apps/backend` (Hono, Drizzle, Neon Postgres via Cloudflare Hyperdrive) · `packages/schemas` (Zod schemas + types, source of truth for all types — never duplicate one in an app).
 
-**Approved packages — don't introduce alternatives:** routing `@tanstack/react-router`+`react-start` · server state `@tanstack/react-query` · client state `zustand` · forms `@tanstack/react-form` (not react-hook-form) · validation `zod` v4 · UI `shadcn/ui` in `src/shadcn/ui/` + Tailwind v4 · icons `@phosphor-icons/react` · auth `@clerk/tanstack-react-start` (web) / `@clerk/backend` (worker) · HTTP `hono` v4 + `@hono/zod-validator` · ORM `drizzle-orm` + D1 · logging `@logtape/logtape` via `AppLogger` (never `console.log`) · errors Sentry · tests Vitest + RTL.
+**Approved packages — don't introduce alternatives:** routing `@tanstack/react-router`+`react-start` · server state `@tanstack/react-query` · client state `zustand` · forms `@tanstack/react-form` (not react-hook-form) · validation `zod` v4 · UI `shadcn/ui` in `src/shadcn/ui/` + Tailwind v4 · icons `@phosphor-icons/react` · auth `@clerk/tanstack-react-start` (web) / `@clerk/backend` (worker) · HTTP `hono` v4 + `@hono/zod-validator` · ORM `drizzle-orm` + `postgres` (postgres.js, `drizzle-orm/postgres-js`) through Hyperdrive → Neon · logging `@logtape/logtape` via `AppLogger` (never `console.log`) · errors Sentry · tests Vitest + RTL.
 
 Before using any third-party API: check the installed version in `package.json`, read its file under `llm-context/`, and use context7 if still unclear. Never code against training-data memory of a library.
 
@@ -41,8 +41,8 @@ Before using any third-party API: check the installed version in `package.json`,
 
 - **Status Enum Pattern** (any discrete-state field): DB stores int only. Define `<Feature>StatusIntEnum`, `<Feature>StatusLabelEnum`, `<FEATURE>_STATUS_LABEL_MAP` in `<Feature>Common.ts`. DAL returns raw int; Repo maps int→label in a private `withStatusLabel`; API response always carries both `<feature>Status` (int) and `<feature>StatusLabel` (string). See `NotesCommon.ts` / `NotesRepo.ts`.
 - **Public ID Pattern** (every table): `id` (autoincrement int) is internal-only — joins/FKs, never sent to or accepted from a client. `publicId` (`Utility.generatePublicId()`, unique-indexed) is client-facing — every route param, API response, and frontend reference uses it instead. DAL generates it on insert and finds rows by it; API response types structurally omit `id` (`Omit<Note, "id">`). See `NotesCommon.ts` / `NotesDAL.ts` / `NotesRoutes.ts`.
-- **DB tables**: `sqliteTable` aliased `table`; camelCase in code, `snake_case` in DB; timestamps as `t.integer({ mode: "timestamp" })`; `createdAt` notNull + `updatedAt` nullable; index every FK; unique-index `publicId` and any other unique field.
-- **DAL**: class holding `private db`, ctor takes `env`. Every method inits `{ isSuccess: false }`, try/catch, `AppLogger.error` with `LogCategory`/`LogAction` on failure.
+- **DB tables**: `pgTable` aliased `table`; camelCase in code, `snake_case` in DB; `id` as `t.integer().primaryKey().generatedAlwaysAsIdentity()`; timestamps as `t.timestamp({ mode: "date", withTimezone: true })`; `createdAt` notNull + `updatedAt` nullable; index every FK; unique-index `publicId` and any other unique field.
+- **DAL**: class holding `private db: DbClient`, ctor takes `env`. Postgres has no `.get()`. Destructure instead: `const [row] = await …returning()`. Every method inits `{ isSuccess: false }`, try/catch, `AppLogger.error` with `LogCategory`/`LogAction` on failure.
 - **Repo**: thin — maps API shapes to DAL params, business logic lives here, not in DAL.
 - **Routes**: `checkAuth` first, then `zValidator`. `c.get("clerkUserId")` for the user. 201/200/404/500.
 - **Frontend `-data.ts`**: `Queries` class with hierarchical keys (`keys.all()` invalidates every detail). `setQueryData` on update, `removeQueries` on delete, `mutateAsync` when the caller must await, `mutate` otherwise. Every mutation needs a non-empty `onError` (toast).
@@ -69,9 +69,10 @@ pnpm dev                          # run all apps
 pnpm --filter web dev
 pnpm --filter backend dev
 pnpm --filter web test
-pnpm --filter backend test
-pnpm --filter backend db:generate # generate migration after schema change
-pnpm --filter backend db:migrate  # apply migration (remote — apps/backend has no local variant yet)
+pnpm --filter backend test            # needs TEST_DATABASE_URL in apps/backend/.env
+pnpm --filter backend db:generate     # generate migration after schema change
+pnpm --filter backend db:migrate      # apply migrations to DATABASE_URL (Neon)
+pnpm --filter backend db:migrate:test # apply migrations to TEST_DATABASE_URL (Neon test branch)
 ```
 
 ---

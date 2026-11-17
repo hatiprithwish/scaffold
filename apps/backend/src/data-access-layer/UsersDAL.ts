@@ -1,13 +1,12 @@
 import { eq } from "drizzle-orm";
-import type { DrizzleD1Database } from "drizzle-orm/d1";
-import getDbClient from "@/db/dbClient";
+import getDbClient, { type DbClient } from "@/db/dbClient";
 import { users } from "@/db/tables";
 import * as Schemas from "@app/schemas";
 import AppLogger from "@/providers/logger";
 import Utility from "@/utils/Utility";
 
 export default class UsersDAL {
-  private db: DrizzleD1Database;
+  private db: DbClient;
 
   constructor(env: Env) {
     this.db = getDbClient(env);

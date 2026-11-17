@@ -1,14 +1,13 @@
 import type { SQL } from "drizzle-orm";
 import { and, eq } from "drizzle-orm";
-import type { DrizzleD1Database } from "drizzle-orm/d1";
-import getDbClient from "@/db/dbClient";
+import getDbClient, { type DbClient } from "@/db/dbClient";
 import { notes } from "@/db/tables";
 import * as Schemas from "@app/schemas";
 import AppLogger from "@/providers/logger";
 import Utility from "@/utils/Utility";
 
 export default class NotesDAL {
-  private db: DrizzleD1Database;
+  private db: DbClient;
 
   constructor(env: Env) {
     this.db = getDbClient(env);
@@ -19,7 +18,7 @@ export default class NotesDAL {
 
     try {
       const now = new Date();
-      const noteResponse = await this.db
+      const [noteResponse] = await this.db
         .insert(notes)
         .values({
           publicId: Utility.generatePublicId(),
@@ -29,8 +28,7 @@ export default class NotesDAL {
           createdAt: now,
           updatedAt: null,
         })
-        .returning()
-        .get();
+        .returning();
 
       response.isSuccess = true;
       response.message = "Note created successfully";
@@ -127,7 +125,7 @@ export default class NotesDAL {
 
     try {
       const now = new Date();
-      const noteResponse = await this.db
+      const [noteResponse] = await this.db
         .update(notes)
         .set({
           // DEV_NOTE: When params.title === null, it's ignored
@@ -137,8 +135,7 @@ export default class NotesDAL {
           updatedAt: now,
         })
         .where(and(eq(notes.publicId, params.publicId), eq(notes.userId, params.userId)))
-        .returning()
-        .get();
+        .returning();
 
       if (!noteResponse) {
         const message = "Note not found";
