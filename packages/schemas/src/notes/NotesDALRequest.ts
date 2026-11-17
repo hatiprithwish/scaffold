@@ -8,5 +8,6 @@ export type FindNoteDALRequest = Pick<Note, "publicId" | "userId">;
 
 export type GetNotesDALRequest = Pick<Note, "userId">;
 
+// Only user-editable fields; updatedAt is set by the DAL, status is not updatable via this path
 export type UpdateNoteDALRequest = FindNoteDALRequest &
-  NullableDALFields<Omit<Note, "id" | "publicId" | "userId" | "createdAt">>;
+  NullableDALFields<Pick<Note, "title" | "body">>;

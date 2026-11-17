@@ -23,26 +23,38 @@ export default class NotesRepo {
       title: params.note.title,
       body: params.note.body,
     });
+    const response: Schemas.CreateNoteApiResponse = {
+      isSuccess: result.isSuccess,
+      message: result.message,
+    };
     if (result.isSuccess && result.note) {
-      result.note = this.withStatusLabel(result.note);
+      response.note = this.withStatusLabel(result.note);
     }
-    return result;
+    return response;
   }
 
   async getNoteDetails(params: { userId: string; publicId: string }) {
     const result = await this.dal.getNoteDetails(params);
+    const response: Schemas.GetNoteApiResponse = {
+      isSuccess: result.isSuccess,
+      message: result.message,
+    };
     if (result.isSuccess && result.note) {
-      result.note = this.withStatusLabel(result.note);
+      response.note = this.withStatusLabel(result.note);
     }
-    return result;
+    return response;
   }
 
   async getNotes(params: { userId: string }) {
     const result = await this.dal.getNotes(params);
+    const response: Schemas.GetNotesApiResponse = {
+      isSuccess: result.isSuccess,
+      message: result.message,
+    };
     if (result.isSuccess && result.notes) {
-      result.notes = result.notes.map((note) => this.withStatusLabel(note));
+      response.notes = result.notes.map((note) => this.withStatusLabel(note));
     }
-    return result;
+    return response;
   }
 
   async updateNote(params: Schemas.UpdateNoteApiRequest & { userId: string; publicId: string }) {
@@ -52,10 +64,14 @@ export default class NotesRepo {
       title: params.note.title ?? null,
       body: params.note.body ?? null,
     });
+    const response: Schemas.UpdateNoteApiResponse = {
+      isSuccess: result.isSuccess,
+      message: result.message,
+    };
     if (result.isSuccess && result.note) {
-      result.note = this.withStatusLabel(result.note);
+      response.note = this.withStatusLabel(result.note);
     }
-    return result;
+    return response;
   }
 
   async deleteNote(params: { userId: string; publicId: string }) {
