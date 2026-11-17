@@ -1,9 +1,8 @@
 import type { ApiResponse } from "../common";
 import type { Note } from "./NotesCommon";
 
-// DEV_NOTE: DAL responses carry raw DB rows (status as int, internal id included).
-// The Repo maps them to the API shapes in NotesApiResponse.ts.
-
+// DAL responses carry raw DB rows (status as int, includes internal id).
+// The Repo maps these to NoteWithStatus before they reach a client.
 export interface CreateNoteDALResponse extends ApiResponse {
   note?: Note;
 }

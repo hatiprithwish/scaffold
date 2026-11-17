@@ -17,40 +17,61 @@ export default class NotesRepo {
     };
   }
 
-  async createNote(
-    params: Schemas.CreateNoteApiRequest & { userId: string },
-  ): Promise<Schemas.CreateNoteApiResponse> {
-    const { note, ...result } = await this.dal.createNote({
+  async createNote(params: Schemas.CreateNoteApiRequest & { userId: string }) {
+    const result = await this.dal.createNote({
       userId: params.userId,
       title: params.note.title,
       body: params.note.body,
     });
-    return note ? { ...result, note: this.withStatusLabel(note) } : result;
+    const response: Schemas.CreateNoteApiResponse = {
+      isSuccess: result.isSuccess,
+      message: result.message,
+    };
+    if (result.isSuccess && result.note) {
+      response.note = this.withStatusLabel(result.note);
+    }
+    return response;
   }
 
-  async getNoteDetails(params: {
-    userId: string;
-    publicId: string;
-  }): Promise<Schemas.GetNoteApiResponse> {
-    const { note, ...result } = await this.dal.getNoteDetails(params);
-    return note ? { ...result, note: this.withStatusLabel(note) } : result;
+  async getNoteDetails(params: { userId: string; publicId: string }) {
+    const result = await this.dal.getNoteDetails(params);
+    const response: Schemas.GetNoteApiResponse = {
+      isSuccess: result.isSuccess,
+      message: result.message,
+    };
+    if (result.isSuccess && result.note) {
+      response.note = this.withStatusLabel(result.note);
+    }
+    return response;
   }
 
-  async getNotes(params: { userId: string }): Promise<Schemas.GetNotesApiResponse> {
-    const { notes, ...result } = await this.dal.getNotes(params);
-    return notes ? { ...result, notes: notes.map((note) => this.withStatusLabel(note)) } : result;
+  async getNotes(params: { userId: string }) {
+    const result = await this.dal.getNotes(params);
+    const response: Schemas.GetNotesApiResponse = {
+      isSuccess: result.isSuccess,
+      message: result.message,
+    };
+    if (result.isSuccess && result.notes) {
+      response.notes = result.notes.map((note) => this.withStatusLabel(note));
+    }
+    return response;
   }
 
-  async updateNote(
-    params: Schemas.UpdateNoteApiRequest & { userId: string; publicId: string },
-  ): Promise<Schemas.UpdateNoteApiResponse> {
-    const { note, ...result } = await this.dal.updateNote({
+  async updateNote(params: Schemas.UpdateNoteApiRequest & { userId: string; publicId: string }) {
+    const result = await this.dal.updateNote({
       publicId: params.publicId,
       userId: params.userId,
       title: params.note.title ?? null,
       body: params.note.body ?? null,
     });
-    return note ? { ...result, note: this.withStatusLabel(note) } : result;
+    const response: Schemas.UpdateNoteApiResponse = {
+      isSuccess: result.isSuccess,
+      message: result.message,
+    };
+    if (result.isSuccess && result.note) {
+      response.note = this.withStatusLabel(result.note);
+    }
+    return response;
   }
 
   async deleteNote(params: { userId: string; publicId: string }) {
