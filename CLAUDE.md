@@ -48,10 +48,12 @@ Before using any third-party API: check the installed version in `package.json`,
 - **Frontend `-data.ts`**: `Queries` class with hierarchical keys (`keys.all()` invalidates every detail). `setQueryData` on update, `removeQueries` on delete, `mutateAsync` when the caller must await, `mutate` otherwise. Every mutation needs a non-empty `onError` (toast).
 - **Frontend pages**: `useAuth()` at page level, explicit loading/error states, all requests through `apiClient`.
 - **Routes needing user data** live under `_authenticated/` — always.
+- **Dropdowns**: every dropdown is shadcn's `Select` through `AppSelect` (`apps/web/src/components/AppSelect.tsx`; takes plain `options`, full width, opens under the trigger), never the browser's `<select>`: it can't be themed and breaks the look of the app. Menus of actions stay `DropdownMenu`.
 - **Styling**: Tailwind only, shadcn used as-is or via `className` (never edit `src/shadcn/ui/`), no CSS modules.
 
 ## Hard bans
 
+- A native `<select>` (use `AppSelect`)
 - `console.log`, `any`, `@ts-ignore`/`as any` as a fix
 - Types or Zod schemas defined outside `packages/schemas`
 - Skipping a layer, or an authenticated route outside `_authenticated/`
