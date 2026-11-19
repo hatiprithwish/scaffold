@@ -5,10 +5,12 @@
 Create these in both the `staging` and `production` environments (Settings → Environments).
 
 **Secrets** (`${{ secrets.NAME }}`, credentials only):
+
 - `CLOUDFLARE_API_TOKEN`
 - `SENTRY_AUTH_TOKEN`
 
 **Variables** (`${{ vars.NAME }}`, plain values, not secret):
+
 - `CLOUDFLARE_ACCOUNT_ID`
 - `VITE_API_URL`
 - `VITE_CLERK_PUBLISHABLE_KEY`
