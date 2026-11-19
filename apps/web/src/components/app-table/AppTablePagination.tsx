@@ -9,6 +9,7 @@ import {
   ArrowClockwise,
 } from "@phosphor-icons/react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shadcn/ui/tooltip";
+import AppSelect from "@/components/AppSelect";
 import { cn } from "@/lib/utils";
 import type { AppTablePaginationProps } from "./AppTable.types";
 import { PAGINATION_LABELS, PAGINATION_NAV_BTN_CLASS, computePaginationDisplay } from "./utils";
@@ -98,18 +99,18 @@ export function AppTablePagination({
             <span className="hidden text-xs text-muted-foreground md:block">
               {PAGINATION_LABELS.itemsPerPage}
             </span>
-            <select
-              value={selectedPageSize}
-              onChange={(e) => onPageSizeChange?.(Number(e.target.value))}
+            <AppSelect
+              size="sm"
+              aria-label={PAGINATION_LABELS.itemsPerPage}
+              className="w-auto min-w-16"
+              value={String(selectedPageSize)}
+              onValueChange={(next) => onPageSizeChange?.(Number(next))}
               disabled={isLoading}
-              className="h-8 rounded-md border border-border bg-card px-2 text-xs text-foreground outline-none focus:ring-1 focus:ring-primary disabled:opacity-40"
-            >
-              {pageSizeOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
+              options={pageSizeOptions.map((opt) => ({
+                value: String(opt.value),
+                label: opt.label,
+              }))}
+            />
           </div>
         )}
 
