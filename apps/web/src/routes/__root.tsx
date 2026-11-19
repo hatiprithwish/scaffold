@@ -6,6 +6,7 @@ import appCss from "../styles.css?url";
 import type { ReactNode } from "react";
 import { Toaster } from "../shadcn/ui/sonner";
 import { ThemeProvider } from "../providers/ThemeProvider";
+import FeedbackButton from "@/components/feedback/FeedbackButton";
 
 interface RouterContext {
   queryClient: QueryClient;
@@ -20,6 +21,7 @@ function RootDocument({ children }: { children: ReactNode }) {
       <body>
         {children}
         <Toaster />
+        <FeedbackButton />
         <Scripts />
       </body>
     </html>

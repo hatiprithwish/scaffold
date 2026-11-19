@@ -28,7 +28,8 @@ export function createRouter() {
       integrations: [
         Sentry.tanstackRouterBrowserTracingIntegration(router),
         Sentry.replayIntegration(),
-        Sentry.feedbackIntegration({ colorScheme: "system" }),
+        // DEV_NOTE: autoInject off: the trigger is components/feedback/FeedbackButton.tsx, which attaches to this dialog.
+        Sentry.feedbackIntegration({ colorScheme: "system", autoInject: false }),
       ],
       enableLogs: true,
       tracesSampleRate: 1.0,
