@@ -19,12 +19,16 @@
 | Routes              | `apps/backend/src/routes/NotesRoutes.ts`             |
 | Frontend data layer | `apps/web/src/routes/_authenticated/notes/-data.ts`  |
 | Frontend page       | `apps/web/src/routes/_authenticated/notes/index.tsx` |
+| Shared data layer   | `apps/web/src/data/index.ts`                         |
+| Dropdown            | `apps/web/src/components/AppSelect.tsx`              |
+| Date field          | `apps/web/src/components/AppDatePicker.tsx`          |
+| Time field          | `apps/web/src/components/AppTimePicker.tsx`          |
 
 ## Stack
 
 Monorepo (pnpm workspaces): `apps/web` (TanStack Start, React 19, Cloudflare Workers) · `apps/backend` (Hono, Drizzle, Neon Postgres via Cloudflare Hyperdrive) · `packages/schemas` (Zod schemas + types, source of truth for all types — never duplicate one in an app).
 
-**Approved packages — don't introduce alternatives:** routing `@tanstack/react-router`+`react-start` · server state `@tanstack/react-query` · client state `zustand` · forms `@tanstack/react-form` (not react-hook-form) · validation `zod` v4 · UI `shadcn/ui` in `src/shadcn/ui/` + Tailwind v4 · icons `@phosphor-icons/react` · auth `@clerk/tanstack-react-start` (web) / `@clerk/backend` (worker) · HTTP `hono` v4 + `@hono/zod-validator` · ORM `drizzle-orm` + `postgres` (postgres.js, `drizzle-orm/postgres-js`) through Hyperdrive → Neon · logging `@logtape/logtape` via `AppLogger` (never `console.log`) · errors Sentry · tests Vitest + RTL.
+**Approved packages — don't introduce alternatives:** routing `@tanstack/react-router`+`react-start` · server state `@tanstack/react-query` · client state `zustand` · forms `@tanstack/react-form` (not react-hook-form) · validation `zod` v4 · UI `shadcn/ui` in `src/shadcn/ui/` + Tailwind v4 · calendar `react-day-picker` (only through shadcn's `Calendar`) · icons `@phosphor-icons/react` · auth `@clerk/tanstack-react-start` (web) / `@clerk/backend` (worker) · HTTP `hono` v4 + `@hono/zod-validator` · ORM `drizzle-orm` + `postgres` (postgres.js, `drizzle-orm/postgres-js`) through Hyperdrive → Neon · logging `@logtape/logtape` via `AppLogger` (never `console.log`) · errors Sentry · tests Vitest + RTL.
 
 Before using any third-party API: check the installed version in `package.json`, read its file under `llm-context/`, and use context7 if still unclear. Never code against training-data memory of a library.
 
@@ -48,12 +52,18 @@ Before using any third-party API: check the installed version in `package.json`,
 - **Frontend `-data.ts`**: `Queries` class with hierarchical keys (`keys.all()` invalidates every detail). `setQueryData` on update, `removeQueries` on delete, `mutateAsync` when the caller must await, `mutate` otherwise. Every mutation needs a non-empty `onError` (toast).
 - **Frontend pages**: `useAuth()` at page level, explicit loading/error states, all requests through `apiClient`.
 - **Routes needing user data** live under `_authenticated/` — always.
-- **Dropdowns**: every dropdown is shadcn's `Select` through `AppSelect` (`apps/web/src/components/AppSelect.tsx`; takes plain `options`, full width, opens under the trigger), never the browser's `<select>`: it can't be themed and breaks the look of the app. Menus of actions stay `DropdownMenu`.
+- **Form controls look like the app, never the browser.** Every control is a shadcn component (`src/shadcn/ui/`) or one of our wrappers, themed by our tokens, the same on every OS. Production SaaS, not a browser default. `pnpm lint` refuses the native ones.
+  - Dropdown → `AppSelect` (`apps/web/src/components/AppSelect.tsx`; plain `options`, full width, opens under the trigger). Menus of actions stay `DropdownMenu`.
+  - Date → `AppDatePicker` (Popover + shadcn `Calendar`; value `"YYYY-MM-DD"`, `""` = none; pass the server's `today`).
+  - Time → `AppTimePicker` (`AppSelect` over 15-minute slots; value `"HH:mm"`).
+  - Radio / checkbox → a styled `<label>` around an `sr-only` input; number → `Input type="number"` (the web stylesheet hides the OS spinner); file → a `Button` that opens an `sr-only` `<input type="file">`; confirmations → a `Dialog` or a toast.
+  - No shadcn component and no wrapper for what you need → add it from shadcn (`pnpm exec shadcn add <name>` in `apps/web`) and wrap it in `apps/web/src/components/App<Name>.tsx`; ask first if it needs a new package.
+- **Shared frontend data** (`apps/web/src/data/index.ts`): queries and mutations used by more than one route or by the app shell (the signed-in user) live here, not in one route's `-data.ts`. Same shape as `-data.ts` (a `Queries` class with hierarchical keys, hooks, non-empty `onError`). A route's own data stays in its `-data.ts`.
 - **Styling**: Tailwind only, shadcn used as-is or via `className` (never edit `src/shadcn/ui/`), no CSS modules.
 
 ## Hard bans
 
-- A native `<select>` (use `AppSelect`)
+- A browser-default control: `<select>`, `<input type="date" | "time" | "datetime-local" | "month" | "week" | "color">`, a visible native checkbox / radio / file input, or `alert` / `confirm` / `prompt` (use `AppSelect`, `AppDatePicker`, `AppTimePicker`, a `Dialog`, a toast)
 - `console.log`, `any`, `@ts-ignore`/`as any` as a fix
 - Types or Zod schemas defined outside `packages/schemas`
 - Skipping a layer, or an authenticated route outside `_authenticated/`
@@ -72,6 +82,7 @@ pnpm lint                         # eslint, every package (pre-commit)
 pnpm typecheck                    # tsc --noEmit, every package (pre-commit)
 pnpm --filter web dev
 pnpm --filter backend dev
+pnpm --filter backend secret:put <NAME> --env staging  # set a Worker secret from anywhere in the repo (wrangler needs apps/backend)
 pnpm --filter web test
 pnpm --filter backend test            # needs TEST_DATABASE_URL in apps/backend/.env
 pnpm --filter backend db:generate     # generate migration after schema change
