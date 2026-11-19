@@ -17,7 +17,9 @@ export default defineConfig(({ mode }) => {
         org: env.SENTRY_ORG,
         project: env.SENTRY_PROJECT,
         authToken: env.SENTRY_AUTH_TOKEN,
-        tunnelRoute: true,
+        // The server SDK isn't initialised on Workers (instrument.server.mjs only loads via Node's
+        // --import), so the tunnel can't derive the DSN at runtime. Pass it at build time.
+        tunnelRoute: env.VITE_SENTRY_DSN ? { allowedDsns: [env.VITE_SENTRY_DSN] } : true,
       }),
       viteReact(),
       tailwindcss(),
