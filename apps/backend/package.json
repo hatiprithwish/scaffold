@@ -6,6 +6,7 @@
     "dev": "wrangler dev",
     "build": "wrangler deploy --dry-run",
     "deploy": "wrangler deploy",
+    "secret:put": "wrangler secret put",
     "generate-types": "wrangler types",
     "db:generate": "drizzle-kit generate --name scaffold",
     "db:migrate": "drizzle-kit migrate",
